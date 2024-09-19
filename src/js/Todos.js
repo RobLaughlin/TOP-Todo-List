@@ -1,4 +1,5 @@
 import PubSub from "./PubSub";
+import { v4 as uuidv4 } from 'uuid';
 
 export class Todo {
     #title;
@@ -6,7 +7,9 @@ export class Todo {
     #dueDate;
     #priority;
     #notes;
-    #onChange;
+    #uuid = uuidv4();
+
+    onChange = null;
 
     /**
      * Creates a Todo
@@ -26,38 +29,40 @@ export class Todo {
         this.#dueDate = dueDate;
         this.#priority = priority;
         this.#notes = notes;
-        this.#onChange = onChange;
+        this.onChange = onChange;
     }
 
     get title() { return this.#title; }
     set title(value) {
         this.#title = value;
-        if (this.#onChange !== null) { PubSub.publish(this.#onChange, this) };
+        if (this.onChange !== null) { PubSub.publish(this.onChange, this) };
     }
 
     get description() { return this.#description; }
     set description(value) {
         this.#description = value;
-        if (this.#onChange !== null) { PubSub.publish(this.#onChange, this) };
+        if (this.onChange !== null) { PubSub.publish(this.onChange, this) };
     }
 
     get dueDate() { return this.#dueDate; }
     set dueDate(value) {
         this.#dueDate = value;
-        if (this.#onChange !== null) { PubSub.publish(this.#onChange, this) };
+        if (this.onChange !== null) { PubSub.publish(this.onChange, this) };
     }
 
     get priority() { return this.#priority; }
     set priority(value) {
         this.#priority = value;
-        if (this.#onChange !== null) { PubSub.publish(this.#onChange, this) };
+        if (this.onChange !== null) { PubSub.publish(this.onChange, this) };
     }
 
     get notes() { return this.#notes; }
     set notes(value) {
         this.#notes = value;
-        if (this.#onChange !== null) { PubSub.publish(this.#onChange, this) };
+        if (this.onChange !== null) { PubSub.publish(this.onChange, this) };
     }
+
+    get uuid() { return this.#uuid; }
 }
 
 export class Project {
@@ -83,5 +88,3 @@ export class ProjectList {
         this.#projects = projects.map(project => ({...project}));
     }
 }
-
-new Todo()
