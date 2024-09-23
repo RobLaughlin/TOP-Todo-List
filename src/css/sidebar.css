@@ -1,0 +1,16 @@
+.sidebar {
+    background-color: #0d131f;
+    min-width: 300px;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    font-family: 'Roboto', 'Times New Roman', Times, serif;
+}
+
+.sidebar > .titleContainer {
+    height: 75px;
+    background-color: #070b11;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+}
