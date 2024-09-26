@@ -1,3 +1,4 @@
+/* Sidebar */
 .sidebar {
     background-color: #0d131f;
     min-width: 300px;
@@ -6,6 +7,7 @@
     font-family: 'Roboto', 'Times New Roman', Times, serif;
 }
 
+/* Sidebar title */
 .sidebar > .titleContainer {
     height: 75px;
     background-color: #070b11;
@@ -15,6 +17,7 @@
     font-size: 16px;
 }
 
+/* Search bar */
 .searchBar {
     display: flex;
     justify-content: left;
@@ -50,4 +53,37 @@
 
 .search::placeholder {
     color: rgba(255, 255, 255, 0.4);
+}
+
+/* Sidebar item */
+.sidebar > .item {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    font-size: 24px;
+    margin-left: 8px;
+    padding: 24px 8px 0px 8px;
+    cursor: default;
+}
+
+.sidebar > .item > .icon {
+    width: 30px;
+    height: 30px;
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.sidebar > .item >.icon:hover {
+    opacity: 0.8;
+}
+
+.sidebar > .item > .text {
+    margin-left: 16px;
+    opacity: 0.8;
+}
+
+.sidebar > .item > .removeProjectIcon {
+    margin-left: auto;
+    margin-right: 8px;
+    opacity: 0.1;
 }
