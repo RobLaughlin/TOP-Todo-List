@@ -2,7 +2,20 @@ import "./../css/sidebar.css";
 import "./../css/todos.css";
 import "./../css/index.css";
 
-import { Todo } from "./Todos";
+function searchBarFocused(e) {
+    e.preventDefault();
 
-const todo = new Todo("Title", "Desc", new Date(), 0, "...notes", "TodoChanged");
-console.log(todo);
+    let searchBar = e.target.parentElement;
+    searchBar.classList.add("focused");
+}
+
+function searchBarUnFocused(e) {
+    e.preventDefault();
+
+    let searchBar = e.target.parentElement;
+    searchBar.classList.remove("focused");
+}
+
+const searchInput = document.getElementsByClassName("search")[0];
+searchInput.addEventListener("focusin", searchBarFocused);
+searchInput.addEventListener("focusout", searchBarUnFocused);

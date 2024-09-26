@@ -14,3 +14,40 @@
     align-items: center;
     font-size: 16px;
 }
+
+.searchBar {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    background-color: #10213c;
+    border-radius: 8px;
+    width: 90%;
+    margin: 16px auto 0 auto;
+    height: 40px;
+    font-size: 24px;
+}
+
+.searchBar.focused {
+    box-shadow: 1px 1px 8px rgba(0, 13, 255, 0.221);
+}
+
+.searchBar > .icon {
+    width: 24px;
+    height: 24px;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.searchBar > .search {
+    background-color: #10213c;
+    border: 0;
+    height: 32px;
+    color: white;
+    width: 100%;
+    font-size: 16px;
+    outline: none;
+}
+
+.search::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
