@@ -25,7 +25,7 @@
     background-color: #10213c;
     border-radius: 8px;
     width: 90%;
-    margin: 16px auto 0 auto;
+    margin: 16px auto 16px auto;
     height: 40px;
     font-size: 24px;
 }
@@ -61,9 +61,12 @@
     justify-content: left;
     align-items: center;
     font-size: 24px;
-    margin-left: 8px;
-    padding: 24px 8px 0px 8px;
+    padding: 16px;
     cursor: default;
+}
+
+.sidebar > .item:nth-child(even) {
+    background-color: #0b121b;
 }
 
 .sidebar > .item > .icon {
