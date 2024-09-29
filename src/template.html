@@ -17,15 +17,29 @@
                     <input type="search" placeholder="Search" class="search">
                 </div>
             </div>
-            <div class="item">
-                <img src="icons/folder.svg" alt="Sidebar icon" class="icon">
-                <span class="text">Default</span>
-                <img src="icons/minus-box.svg" alt="Magnifying glass icon" class="icon removeProjectIcon">
+            <div class="itemContainer">
+                <div class="item project" id="project-1">
+                    <img src="icons/folder.svg" alt="Sidebar icon" class="icon">
+                    <span class="text selected">Default</span>
+                    <img src="icons/minus-box.svg" alt="Magnifying glass icon" class="icon removeProjectIcon">
+                </div>
+                <div class="item todo" data-project="project-1">
+                    <img src="icons/note.svg" alt="Sidebar icon" class="icon">
+                    <span class="text">Todo 1</span>
+                    <img src="icons/minus-box.svg" alt="Magnifying glass icon" class="icon removeProjectIcon">
+                </div>
+                <div class="item todo" data-project="project-1">
+                    <img src="icons/note.svg" alt="Sidebar icon" class="icon">
+                    <span class="text">Todo 2</span>
+                    <img src="icons/minus-box.svg" alt="Magnifying glass icon" class="icon removeProjectIcon">
+                </div>
             </div>
-            <div class="item">
-                <img src="icons/folder.svg" alt="Sidebar icon" class="icon">
-                <span class="text">Project A</span>
-                <img src="icons/minus-box.svg" alt="Magnifying glass icon" class="icon removeProjectIcon">
+            <div class="itemContainer">
+                <div class="item project" id="project-2">
+                    <img src="icons/folder.svg" alt="Sidebar icon" class="icon">
+                    <span class="text">Project A</span>
+                    <img src="icons/minus-box.svg" alt="Magnifying glass icon" class="icon removeProjectIcon">
+                </div>
             </div>
         </div>
         <div class="todos"></div>
