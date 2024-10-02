@@ -23,5 +23,9 @@ const searchInput = document.getElementsByClassName("search")[0];
 searchInput.addEventListener("focusin", searchBarFocused);
 searchInput.addEventListener("focusout", searchBarUnFocused);
 
-let projects = new ProjectMap([new Project("Default")]);
+let defaultProject = new Project("Default");
+let defaultTodo = new Todo("Default Todo");
+defaultProject.add(defaultTodo);
+
+let projects = new ProjectMap([defaultProject], "projectSelected");
 console.log(projects);
