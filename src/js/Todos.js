@@ -63,6 +63,10 @@ export class Todo {
     }
 
     get uuid() { return this.#uuid; }
+
+    copy() {
+        return new Todo(this.title, this.description, this.dueDate, this.priority, this.notes, this.onChange);
+    }
 }
 
 export class Project extends Map {
@@ -84,17 +88,41 @@ export class Project extends Map {
     get name() { return this.#name; }
 
     get uuid() { return this.#uuid; }
+
+    copy() {
+        return new Project(this.#name, [...(this.values().map(todo => todo.copy()))]);
+    }
 }  
 
 export class ProjectMap extends Map {
-    #projects = {}
+    #selected = null
+    onSelect = null;
 
     /**
      * A map of Projects associated by Project UUID
      * @param {Project[]} projects The array of projects to be put into an UUID map 
+     * @param {string} onSelect The event name to be broadcast when a project is selected
      */
-    constructor(projects=[]) {
-        let projectPairs = projects.map(project => [project.uuid, project]);
+    constructor(projects=[], onSelect=null) {
+        let projectPairs = projects.map(project => {
+            let newProject = project.copy();
+            return [newProject.uuid, newProject];
+        });
         super(projectPairs);
+
+        this.onSelect = onSelect;
+    }
+    
+    get selected() { return this.#selected; }
+    
+    /**
+     * Selects a project identified using the project's UUID
+     * @param {string} uuid The associated project UUID
+     */
+    select(uuid) {
+        if (this.has(uuid)) {
+            this.#selected = uuid;
+            if (this.onSelect !== null) { PubSub.publish(this.onSelect, this.get(uuid)); }
+        }
     }
 }
