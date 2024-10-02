@@ -65,26 +65,36 @@ export class Todo {
     get uuid() { return this.#uuid; }
 }
 
-export class Project {
-    #todos
+export class Project extends Map {
+    #name = ""
+    #uuid = uuidv4()
 
     /**
-     * 
-     * @param {Todo[]} [todos=[]] An array of Todos 
+     * A Map of Todos associated by Todo UUID
+     * @param {string} name The name of the project
+     * @param {Todo[]} [todos=[]] An array of Todos to be put into an UUID map
      */
-    constructor(todos=[]) {
-        this.#todos = todos.map(todo => ({...todo}));    
-    }
-}
+    constructor(name, todos=[]) {
+        let todoPairs = todos.map(todo => [todo.uuid, todo]);
+        super(todoPairs);
 
-export class ProjectList {
-    #projects
+        this.#name = name;
+    }
+
+    get name() { return this.#name; }
+
+    get uuid() { return this.#uuid; }
+}  
+
+export class ProjectMap extends Map {
+    #projects = {}
 
     /**
-     * 
-     * @param {Project[]} projects An array of projects 
+     * A map of Projects associated by Project UUID
+     * @param {Project[]} projects The array of projects to be put into an UUID map 
      */
     constructor(projects=[]) {
-        this.#projects = projects.map(project => ({...project}));
+        let projectPairs = projects.map(project => [project.uuid, project]);
+        super(projectPairs);
     }
 }
