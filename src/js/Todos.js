@@ -64,20 +64,31 @@ export class Todo {
 export class Project {
     #name = ""
     #todos = []
+    onChange = null
 
     /**
      * A container for an array of Todos, with a given name
      * @param {string} name The name of the project
      * @param {Todo[]} [todos=[]] The array of todos
+     * @param {?string} [onChange=null] The event to be broadcast when a todo is changed
      */
-    constructor(name, todos=[]) {
+    constructor(name, todos=[], onChange=null) {
         this.#name = name;
         this.#todos = [...todos];
+        this.onChange = onChange;
     }
 
     get name() { return this.#name; }
-    
+
     get todos() { return [...this.#todos]}
+
+    /**
+     * The number of todos in the project
+     * @returns The number of todos 
+     */
+    size() {
+        return this.#todos.length;
+    }
 
     /**
      * Adds a Todo to the array of Todos
@@ -85,5 +96,29 @@ export class Project {
      */
     add(todo) {
         this.#todos.push(todo);
+        if (this.onChange !== null) { PubSub.publish(this.onChange, this); }
+    }
+
+    /**
+     * Removes a todo from the project by index
+     * @param {number} idx The index of the todo to be removed
+     */
+    remove(idx) {
+        if (idx < 0 || idx >= this.#todos.length) {
+            throw new RangeError("Index of todo out of range.");
+        }
+        this.#todos.splice(idx);
+        if (this.onChange !== null) { PubSub.publish(this.onChange, this); }
+    }
+
+    /**
+     * Gets the todo from the corresponding index
+     * @param {number} idx The index of the corresponding todo
+     */
+    get(idx) {
+        if (idx < 0 || idx >= this.#todos.length) {
+            throw new RangeError("Index of todo out of range.");
+        }
+        return this.#todos[idx];
     }
 } 
