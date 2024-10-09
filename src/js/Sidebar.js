@@ -3,7 +3,6 @@ import minusBox from "../icons/minus-box.svg";
 import note from "../icons/note.svg";
 import sanitizeHtml from "sanitize-html";
 import PubSub from "./PubSub";
-import { v4 as uuidv4 } from 'uuid';
 import { Project, Todo } from "./Todos";
 
 export const PROJECTS_CHANGED_EVENT = "projectsChanged";
@@ -75,6 +74,15 @@ function todoRemoved(e, project) {
         }
     }
 }
+
+function folderBtnClicked(e) {
+    let projectContainer = e.target.parentElement.parentElement;
+    let todos = projectContainer.querySelectorAll(".todo");
+    todos.forEach(todo => {
+        todo.classList.toggle("invisible");
+    });
+}
+
 /**
  * 
  * @param {Project} project
@@ -83,7 +91,7 @@ function todoRemoved(e, project) {
 export const projectSidebarTemplate = project => {
     return `
         <div class="item project" data-uuid=${sanitizeHtml(project.uuid)}>
-            <img src="${folder}" alt="Folder icon" class="icon">
+            <img src="${folder}" alt="Folder icon" class="folder icon">
             <span class="text">${sanitizeHtml(project.name)}</span>
             <img src="${minusBox}" alt="Minus box icon, click to remove project" class="icon removeProjectIcon">
         </div>
@@ -97,7 +105,7 @@ export const projectSidebarTemplate = project => {
  */
 export const todoSidebarTemplate = todo => {
     return `
-        <div class="item todo" data-uuid=${sanitizeHtml(todo.uuid)}>
+        <div class="item todo invisible" data-uuid=${sanitizeHtml(todo.uuid)}>
             <img src="${note}" alt="Note icon for to-do" class="icon">
             <span class="text">${sanitizeHtml(todo.title)}</span>
             <img src="${minusBox}" alt="Minus box icon, click to remove to-do under selected project" class="icon removeProjectIcon">
@@ -129,6 +137,12 @@ export const renderSidebar = (projects) => {
         let projectTemplate = document.createElement("template");
         projectTemplate.innerHTML = projectSidebarTemplate(project, p);
         let projectNode = projectTemplate.content.querySelector("div");
+       
+        // Add folder button click event handler
+        let folderBtn = projectNode.querySelector(".folder.icon");
+        folderBtn.addEventListener("click", folderBtnClicked);
+
+        // Add remove button click event handler
         let removeProjectBtn = projectNode.querySelector(".removeProjectIcon");
         removeProjectBtn.addEventListener("click", e => {
             projectRemoved(e, projects);
@@ -152,6 +166,9 @@ export const renderSidebar = (projects) => {
         sidebars.forEach(sidebar => {
             sidebar.appendChild(itemContainer);
         });
+
+        // Open the default/first project
+        if (p === 0) { folderBtn.click(); }
     }
 }
 
