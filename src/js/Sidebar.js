@@ -3,6 +3,7 @@ import minusBox from "../icons/minus-box.svg";
 import note from "../icons/note.svg";
 import sanitizeHtml from "sanitize-html";
 import PubSub from "./PubSub";
+import { v4 as uuidv4 } from 'uuid';
 import { Project, Todo } from "./Todos";
 
 export const PROJECTS_CHANGED_EVENT = "projectsChanged";
@@ -37,13 +38,51 @@ function todoChanged(todo) {
 PubSub.subscribe(TODO_CHANGED_EVENT, todoChanged);
 
 /**
+ * The event called when a project is removed
+ * @param {Event} e The removal icon click event for projects
+ * @param {Project[]} projects The array of projects in the sidebar
+ */
+function projectRemoved(e, projects) {
+    let clickedProject = e.target.parentElement;
+    let clickedItemContainer = clickedProject.parentElement;
+    const UUID = clickedProject.dataset.uuid;
+    console.log(projects);
+    for (let i = 0; i < projects.length; i++) {
+        const project = projects[i];
+        if (project.uuid === UUID) {
+            projects.splice(i, 1);
+            clickedItemContainer.remove();
+            break;
+        }
+    }
+}
+
+/**
+ * The event called when a todo is removed
+ * @param {Event} e The removal icon click event for todos
+ * @param {Project} project The project containing the todo being removed
+ */
+function todoRemoved(e, project) {
+    let clickedTodo = e.target.parentElement;
+    const UUID = clickedTodo.dataset.uuid;
+    console.log(project);
+    for (let i = 0; i < project.size(); i++) {
+        const todo = project.get(i);
+        if (todo.uuid === UUID) {
+            project.remove(i);
+            clickedTodo.remove();
+            break;
+        }
+    }
+}
+/**
  * 
- * @param {Project} project 
+ * @param {Project} project
  * @returns Sanitized Project HTML to inject into sidebar
  */
 export const projectSidebarTemplate = project => {
     return `
-        <div class="item project">
+        <div class="item project" data-uuid=${sanitizeHtml(project.uuid)}>
             <img src="${folder}" alt="Folder icon" class="icon">
             <span class="text">${sanitizeHtml(project.name)}</span>
             <img src="${minusBox}" alt="Minus box icon, click to remove project" class="icon removeProjectIcon">
@@ -53,12 +92,12 @@ export const projectSidebarTemplate = project => {
 
 /**
  * 
- * @param {Todo} todo 
+ * @param {Todo} todo
  * @returns Sanitized Todo HTML to inject into sidebar
  */
 export const todoSidebarTemplate = todo => {
     return `
-        <div class="item todo">
+        <div class="item todo" data-uuid=${sanitizeHtml(todo.uuid)}>
             <img src="${note}" alt="Note icon for to-do" class="icon">
             <span class="text">${sanitizeHtml(todo.title)}</span>
             <img src="${minusBox}" alt="Minus box icon, click to remove to-do under selected project" class="icon removeProjectIcon">
@@ -91,9 +130,8 @@ export const renderSidebar = (projects) => {
         projectTemplate.innerHTML = projectSidebarTemplate(project, p);
         let projectNode = projectTemplate.content.querySelector("div");
         let removeProjectBtn = projectNode.querySelector(".removeProjectIcon");
-        removeProjectBtn.addEventListener("click", () => {
-            projects.splice(p);
-            PubSub.publish("projectsChanged", projects);
+        removeProjectBtn.addEventListener("click", e => {
+            projectRemoved(e, projects);
         });
         itemContainer.appendChild(projectNode);
 
@@ -104,9 +142,8 @@ export const renderSidebar = (projects) => {
             todoTemplate.innerHTML = todoHtml;
             let todoNode = todoTemplate.content.querySelector("div");
             let removeTodoBtn = todoNode.querySelector(".removeProjectIcon");
-            removeTodoBtn.addEventListener("click", () => {
-                project.remove(t);
-                PubSub.publish("projectsChanged", projects);
+            removeTodoBtn.addEventListener("click", e => {
+                todoRemoved(e, project);
             });
             itemContainer.appendChild(todoNode);
         } 
@@ -117,3 +154,15 @@ export const renderSidebar = (projects) => {
         });
     }
 }
+
+export const createTestProjects = (numProjects, numTodos) => {
+    let projects = []
+    for (let i = 0; i < numProjects; i++) {
+        let project = new Project(`Project ${i}`, [], PROJECT_CHANGED_EVENT);
+        for (let j = 0; j < numTodos; j++) {
+            project.add(new Todo(`Todo ${j}`, "description", new Date(), j, "notes", TODO_CHANGED_EVENT));
+        }
+        projects.push(project);
+    }
+    return projects;
+};

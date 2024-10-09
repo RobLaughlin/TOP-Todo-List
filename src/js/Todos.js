@@ -1,4 +1,5 @@
 import PubSub from "./PubSub";
+import { v4 as uuidv4 } from 'uuid';
 
 export class Todo {
     #title;
@@ -6,6 +7,7 @@ export class Todo {
     #dueDate;
     #priority;
     #notes;
+    #uuid = uuidv4();
 
     onChange = null;
 
@@ -59,12 +61,15 @@ export class Todo {
         this.#notes = value;
         if (this.onChange !== null) { PubSub.publish(this.onChange, this) };
     }
+
+    get uuid() { return this.#uuid; }
 }
 
 export class Project {
     #name = ""
     #todos = []
     onChange = null
+    #uuid = uuidv4();
 
     /**
      * A container for an array of Todos, with a given name
@@ -81,6 +86,8 @@ export class Project {
     get name() { return this.#name; }
 
     get todos() { return [...this.#todos]}
+
+    get uuid() { return this.#uuid; }
 
     /**
      * The number of todos in the project
@@ -107,7 +114,7 @@ export class Project {
         if (idx < 0 || idx >= this.#todos.length) {
             throw new RangeError("Index of todo out of range.");
         }
-        this.#todos.splice(idx);
+        this.#todos.splice(idx, 1);
         if (this.onChange !== null) { PubSub.publish(this.onChange, this); }
     }
 
