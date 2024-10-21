@@ -11,7 +11,7 @@ export const PROJECT_CHANGED_EVENT = "projectChanged";
 export const TODO_CHANGED_EVENT = "todoChanged";
 
 /**
- * @module Sidebar
+ * @module Sidebar/EventHandler
  */
 
 /**
@@ -106,6 +106,10 @@ function searchBarUnFocused(e) {
 }
 
 /**
+ * @module Sidebar/Template
+ */
+
+/**
  * The sidebar template
  * @returns Template to generate the sidebar component HTML
  */
@@ -130,7 +134,7 @@ const sidebarTemplate = () => {
  * @param {Project} project
  * @returns Sanitized Project HTML to inject into sidebar
  */
-export const projectSidebarTemplate = project => {
+const projectSidebarTemplate = project => {
     return `
         <div class="item project" data-uuid=${sanitizeHtml(project.uuid)}>
             <img src="${folder}" alt="Folder icon" class="folder icon">
@@ -145,7 +149,7 @@ export const projectSidebarTemplate = project => {
  * @param {Todo} todo
  * @returns Sanitized Todo HTML to inject into sidebar
  */
-export const todoSidebarTemplate = todo => {
+const todoSidebarTemplate = todo => {
     return `
         <div class="item todo invisible" data-uuid=${sanitizeHtml(todo.uuid)}>
             <img src="${note}" alt="Note icon for to-do" class="icon">
@@ -154,6 +158,10 @@ export const todoSidebarTemplate = todo => {
         </div>
     `;
 }
+
+/**
+ * @module Sidebar/Test
+ */
 
 /**
  * Generates a number of projects and todos to use as test data
@@ -176,109 +184,122 @@ export const createTestProjects = (numProjects, numTodos) => {
 };
 
 /**
- * The main sidebar component
+ * @module Sidebar
+*/
+
+/**
+ * Creates the main sidebar component
+ * @constructor
  * @param {Project[]} projects The array of projects to be loaded into the sidebar 
  * @returns {Object} The sidebar component
  */
 export const sidebar = (projects) => {
+    /**
+     * @member {string} selected The UUID of the selected project
+     * @private
+     */
     let selected = projects.length > 0 ? projects[0].uuid : null;
 
-    return (() => {
-        let sidebarObj = {
-            projects,
-
-            /**
-             * Selects a project from the sidebar
-             * @param {string} uuid The UUID of the project to be selected
-             */
-            select: (uuid) => {
-                projects.forEach(project => {
-                    if (project.uuid === uuid) {
-                        selected = uuid;
-                        return project;
-                    }
-                });
-                throw new Error(`Project UUID ${uuid} not found.`);
-            },
-
-            /**
-             * Generates sidebar HTML
-             * @returns {string} The sidebar HTML string
-             */
-            html: () => {
-                let sidebarTemplateNode = document.createElement("template");
-                sidebarTemplateNode.innerHTML = sidebarTemplate();
-                let sidebarNode = sidebarTemplateNode.content.querySelector("div");
-                
-                // Implement search bar behaviour
-                let searchInput = sidebarNode.querySelector(".search");
-                searchInput.addEventListener("focusin", searchBarFocused);
-                searchInput.addEventListener("focusout", searchBarUnFocused);
-
-                // Inject projects and todos
-                for (let p = 0; p < projects.length; p++) {
-                    let project = projects[p];
-            
-                    let itemContainer = document.createElement("div");
-                    itemContainer.classList.add("itemContainer");
-            
-                    // Generate project html
-                    let projectTemplate = document.createElement("template");
-                    projectTemplate.innerHTML = projectSidebarTemplate(project, p);
-                    let projectNode = projectTemplate.content.querySelector("div");
-            
-                    // Make sure correct project is selected
-                    if (project.uuid === selected) {
-                        projectNode.classList.add("selected");
-                    }
-            
-                    // Add folder button click event handler
-                    let folderBtn = projectNode.querySelector(".folder.icon");
-                    folderBtn.addEventListener("click", folderBtnClicked);
-            
-                    // Add remove button click event handler
-                    let removeProjectBtn = projectNode.querySelector(".removeProjectIcon");
-                    removeProjectBtn.addEventListener("click", e => {
-                        projectRemoved(e, projects);
-                    });
-                    itemContainer.appendChild(projectNode);
-            
-                    // Generate todo html
-                    for (let t = 0; t < project.todos.length; t++) {
-                        let todoHtml = todoSidebarTemplate(project.todos[t], t);
-                        let todoTemplate = document.createElement("template");
-                        todoTemplate.innerHTML = todoHtml;
-                        let todoNode = todoTemplate.content.querySelector("div");
-                        let removeTodoBtn = todoNode.querySelector(".removeProjectIcon");
-                        removeTodoBtn.addEventListener("click", e => {
-                            todoRemoved(e, project);
-                        });
-                        itemContainer.appendChild(todoNode);
-                    } 
-                    sidebarNode.appendChild(itemContainer);
-                }
-
-                return sidebarNode;
-            },
-
-            /**
-             * Replaces the given root node with the sidebar component HTML
-             * @param {Node} root The sidebar root node to be replaced
-             * @param {boolean} autoOpenSelected Whether or not to auto open the selected project upon render
-             */
-            render: (root, autoOpenSelected=true) => {
-                root.replaceWith(sidebarObj.html());
-                
-                // Auto open the selected project if such a project exists
-                if (autoOpenSelected) {
-                    root = document.getElementsByClassName(root.className)[0];
-                    let firstProjectFolderIcon = root.querySelector(".itemContainer > .item.project.selected > .folder.icon");
-                    firstProjectFolderIcon.click();
-                }
-
+    /**
+     * Selects a project from the sidebar
+     * @method select
+     * @param {string} uuid The UUID of the project to be selected
+     * @returns {Project} The project selected
+     */
+    function select(uuid) {
+        projects.forEach(project => {
+            if (project.uuid === uuid) {
+                selected = uuid;
+                return project;
             }
-        };
+        });
+        throw new Error(`Project UUID ${uuid} not found.`);      
+    };
 
-        return sidebarObj;
+    /**
+     * Generates sidebar HTML
+     * @method html
+     * @returns {string} The sidebar HTML string
+     */
+    function html() {
+        let sidebarTemplateNode = document.createElement("template");
+        sidebarTemplateNode.innerHTML = sidebarTemplate();
+        let sidebarNode = sidebarTemplateNode.content.querySelector("div");
+        
+        // Implement search bar behaviour
+        let searchInput = sidebarNode.querySelector(".search");
+        searchInput.addEventListener("focusin", searchBarFocused);
+        searchInput.addEventListener("focusout", searchBarUnFocused);
+
+        // Inject projects and todos
+        for (let p = 0; p < projects.length; p++) {
+            let project = projects[p];
+    
+            let itemContainer = document.createElement("div");
+            itemContainer.classList.add("itemContainer");
+    
+            // Generate project html
+            let projectTemplate = document.createElement("template");
+            projectTemplate.innerHTML = projectSidebarTemplate(project, p);
+            let projectNode = projectTemplate.content.querySelector("div");
+    
+            // Make sure correct project is selected
+            if (project.uuid === selected) {
+                projectNode.classList.add("selected");
+            }
+    
+            // Add folder button click event handler
+            let folderBtn = projectNode.querySelector(".folder.icon");
+            folderBtn.addEventListener("click", folderBtnClicked);
+    
+            // Add remove button click event handler
+            let removeProjectBtn = projectNode.querySelector(".removeProjectIcon");
+            removeProjectBtn.addEventListener("click", e => {
+                projectRemoved(e, projects);
+            });
+            itemContainer.appendChild(projectNode);
+    
+            // Generate todo html
+            for (let t = 0; t < project.todos.length; t++) {
+                let todoHtml = todoSidebarTemplate(project.todos[t], t);
+                let todoTemplate = document.createElement("template");
+                todoTemplate.innerHTML = todoHtml;
+                let todoNode = todoTemplate.content.querySelector("div");
+                let removeTodoBtn = todoNode.querySelector(".removeProjectIcon");
+                removeTodoBtn.addEventListener("click", e => {
+                    todoRemoved(e, project);
+                });
+                itemContainer.appendChild(todoNode);
+            } 
+            sidebarNode.appendChild(itemContainer);
+        }
+
+        return sidebarNode;
+    };
+
+    /**
+     * Replaces the given root node with the sidebar component HTML
+     * @method render
+     * @param {Node} root The sidebar root node to be replaced
+     * @param {boolean} [autoOpenSelected=true] Whether or not to auto open the selected project upon render
+     */
+    function render(root, autoOpenSelected=true) {
+        root.replaceWith(this.html());
+        
+        // Auto open the selected project if such a project exists
+        if (autoOpenSelected) {
+            root = document.getElementsByClassName(root.className)[0];
+            let firstProjectFolderIcon = root.querySelector(".itemContainer > .item.project.selected > .folder.icon");
+            firstProjectFolderIcon.click();
+        }
+    };
+
+    return (() => {
+        return {
+            projects,
+            select,
+            html,
+            render
+        };
     })();
 };
