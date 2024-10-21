@@ -9,6 +9,7 @@ import { Project, Todo } from "./Todos";
 export const PROJECTS_CHANGED_EVENT = "projectsChanged";
 export const PROJECT_CHANGED_EVENT = "projectChanged";
 export const TODO_CHANGED_EVENT = "todoChanged";
+export const PROJECT_SELECTED_EVENT = "projectSelected";
 
 /**
  * @module Sidebar/EventHandler
@@ -31,6 +32,35 @@ function todoChanged(todo) {
 
 }
 PubSub.subscribe(TODO_CHANGED_EVENT, todoChanged);
+
+function projectSelected(uuid, projectNode) {
+    // Remove current selection
+    let currentSelectedProject = document.querySelector(".itemContainer > .item.project.selected");
+    currentSelectedProject.classList.remove("selected");
+
+    // Enable new selection
+    let selectedProject = document.querySelector(`.sidebar .item.project[data-uuid="${uuid}"]`)
+    selectedProject.classList.add("selected");
+    // [data-uuid=`${uuid}`]
+
+}
+PubSub.subscribe(PROJECT_SELECTED_EVENT, projectSelected);
+
+function projectClicked(e, sidebar) {
+    let target = null;
+    if (e.target === e.currentTarget) {
+        target = e.target;
+    }
+    else if (e.target.classList.contains("text")) {
+        target = e.target.parentElement;
+    }
+    else {
+        return;
+    }
+    
+    let selectedUUID = target.dataset.uuid;
+    sidebar.select(selectedUUID);
+}
 
 /**
  * The event called when a project is removed
@@ -188,19 +218,10 @@ export const createTestProjects = (numProjects, numTodos) => {
 */
 
 /**
- * @typedef {Object} SidebarComponent
- * @property {string} selected The UUID of the selected project
- * @private
- * @property {function(string)} select Selects a project from the sidebar based on project UUID
- * @property {function()} html Generates sidebar HTML
- * @property {function(Node)} render Injects the given node the sidebar HTML 
- */
-
-/**
  * Creates the main sidebar component
  * @function
  * @param {Project[]} projects The array of projects to be loaded into the sidebar 
- * @returns {SidebarComponent} The sidebar component
+ * @returns {Object} The sidebar component
  */
 export const createSidebar = (projects) => {
     /**
@@ -216,12 +237,15 @@ export const createSidebar = (projects) => {
      * @returns {Project} The project selected
      */
     function select(uuid) {
-        projects.forEach(project => {
+        for (let i = 0; i < projects.length; i++) {
+            const project = projects[i];
             if (project.uuid === uuid) {
                 selected = uuid;
+                PubSub.publish(PROJECT_SELECTED_EVENT, uuid)
                 return project;
             }
-        });
+        }
+
         throw new Error(`Project UUID ${uuid} not found.`);      
     };
 
@@ -256,7 +280,10 @@ export const createSidebar = (projects) => {
             if (project.uuid === selected) {
                 projectNode.classList.add("selected");
             }
-    
+            
+            // Add project selection behaviour
+            projectNode.addEventListener("click", (e, self=this) => {projectClicked(e, self)});
+
             // Add folder button click event handler
             let folderBtn = projectNode.querySelector(".folder.icon");
             folderBtn.addEventListener("click", folderBtnClicked);
@@ -289,18 +316,10 @@ export const createSidebar = (projects) => {
     /**
      * Replaces the given root node with the sidebar component HTML
      * @method render
-     * @param {Node} root The sidebar root node to be replaced
-     * @param {boolean} [autoOpenSelected=true] Whether or not to auto open the selected project upon render
      */
-    function render(root, autoOpenSelected=true) {
+    function render() {
+        let root = document.getElementsByClassName("sidebar")[0];
         root.replaceWith(this.html());
-        
-        // Auto open the selected project if such a project exists
-        if (autoOpenSelected) {
-            root = document.getElementsByClassName(root.className)[0];
-            let firstProjectFolderIcon = root.querySelector(".itemContainer > .item.project.selected > .folder.icon");
-            firstProjectFolderIcon.click();
-        }
     };
 
     return (() => {

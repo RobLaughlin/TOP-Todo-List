@@ -9,4 +9,4 @@ let {projects, selected} = createTestProjects(5, 5);
 
 let root = document.getElementsByClassName("sidebar")[0];
 let sidebarNode = createSidebar(projects);
-sidebarNode.render(root);
+sidebarNode.render();
