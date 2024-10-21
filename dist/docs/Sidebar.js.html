@@ -1,4 +1,32 @@
-import folder from "../icons/folder.svg";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Sidebar.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Sidebar.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import folder from "../icons/folder.svg";
 import minusBox from "../icons/minus-box.svg";
 import note from "../icons/note.svg";
 import magnify from "../icons/magnify.svg";
@@ -42,7 +70,7 @@ function projectRemoved(e, projects) {
     let clickedItemContainer = clickedProject.parentElement;
     const UUID = clickedProject.dataset.uuid;
  
-    for (let i = 0; i < projects.length; i++) {
+    for (let i = 0; i &lt; projects.length; i++) {
         const project = projects[i];
         if (project.uuid === UUID) {
             projects.splice(i, 1);
@@ -61,7 +89,7 @@ function todoRemoved(e, project) {
     let clickedTodo = e.target.parentElement;
     const UUID = clickedTodo.dataset.uuid;
 
-    for (let i = 0; i < project.size(); i++) {
+    for (let i = 0; i &lt; project.size(); i++) {
         const todo = project.get(i);
         if (todo.uuid === UUID) {
             project.remove(i);
@@ -111,17 +139,17 @@ function searchBarUnFocused(e) {
  */
 const sidebarTemplate = () => {
     return `
-        <div class="sidebar">
-            <div class="titleContainer">
-                <h1 class="title">Projects</h1>
-            </div>
-            <div class="searchContainer">
-                <div class="searchBar">
-                    <img src="${magnify}" alt="Magnifying glass icon" class="icon">
-                    <input type="search" placeholder="Search" class="search">
-                </div>
-            </div>
-        </div>
+        &lt;div class="sidebar">
+            &lt;div class="titleContainer">
+                &lt;h1 class="title">Projects&lt;/h1>
+            &lt;/div>
+            &lt;div class="searchContainer">
+                &lt;div class="searchBar">
+                    &lt;img src="${magnify}" alt="Magnifying glass icon" class="icon">
+                    &lt;input type="search" placeholder="Search" class="search">
+                &lt;/div>
+            &lt;/div>
+        &lt;/div>
     `;
 }
 
@@ -132,11 +160,11 @@ const sidebarTemplate = () => {
  */
 export const projectSidebarTemplate = project => {
     return `
-        <div class="item project" data-uuid=${sanitizeHtml(project.uuid)}>
-            <img src="${folder}" alt="Folder icon" class="folder icon">
-            <span class="text">${sanitizeHtml(project.name)}</span>
-            <img src="${minusBox}" alt="Minus box icon, click to remove project" class="icon removeProjectIcon">
-        </div>
+        &lt;div class="item project" data-uuid=${sanitizeHtml(project.uuid)}>
+            &lt;img src="${folder}" alt="Folder icon" class="folder icon">
+            &lt;span class="text">${sanitizeHtml(project.name)}&lt;/span>
+            &lt;img src="${minusBox}" alt="Minus box icon, click to remove project" class="icon removeProjectIcon">
+        &lt;/div>
     `;
 }
 
@@ -147,11 +175,11 @@ export const projectSidebarTemplate = project => {
  */
 export const todoSidebarTemplate = todo => {
     return `
-        <div class="item todo invisible" data-uuid=${sanitizeHtml(todo.uuid)}>
-            <img src="${note}" alt="Note icon for to-do" class="icon">
-            <span class="text">${sanitizeHtml(todo.title)}</span>
-            <img src="${minusBox}" alt="Minus box icon, click to remove to-do under selected project" class="icon removeProjectIcon">
-        </div>
+        &lt;div class="item todo invisible" data-uuid=${sanitizeHtml(todo.uuid)}>
+            &lt;img src="${note}" alt="Note icon for to-do" class="icon">
+            &lt;span class="text">${sanitizeHtml(todo.title)}&lt;/span>
+            &lt;img src="${minusBox}" alt="Minus box icon, click to remove to-do under selected project" class="icon removeProjectIcon">
+        &lt;/div>
     `;
 }
 
@@ -163,9 +191,9 @@ export const todoSidebarTemplate = todo => {
  */
 export const createTestProjects = (numProjects, numTodos) => {
     let projects = []
-    for (let i = 0; i < numProjects; i++) {
+    for (let i = 0; i &lt; numProjects; i++) {
         let project = new Project(`Project ${i}`, [], PROJECT_CHANGED_EVENT);
-        for (let j = 0; j < numTodos; j++) {
+        for (let j = 0; j &lt; numTodos; j++) {
             project.add(new Todo(`Todo ${j}`, "description", new Date(), j, "notes", TODO_CHANGED_EVENT));
         }
         projects.push(project);
@@ -216,7 +244,7 @@ export const sidebar = (projects) => {
                 searchInput.addEventListener("focusout", searchBarUnFocused);
 
                 // Inject projects and todos
-                for (let p = 0; p < projects.length; p++) {
+                for (let p = 0; p &lt; projects.length; p++) {
                     let project = projects[p];
             
                     let itemContainer = document.createElement("div");
@@ -244,7 +272,7 @@ export const sidebar = (projects) => {
                     itemContainer.appendChild(projectNode);
             
                     // Generate todo html
-                    for (let t = 0; t < project.todos.length; t++) {
+                    for (let t = 0; t &lt; project.todos.length; t++) {
                         let todoHtml = todoSidebarTemplate(project.todos[t], t);
                         let todoTemplate = document.createElement("template");
                         todoTemplate.innerHTML = todoHtml;
@@ -281,4 +309,26 @@ export const sidebar = (projects) => {
 
         return sidebarObj;
     })();
-};
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Sidebar.html">Sidebar</a></li></ul><h3>Classes</h3><ul><li><a href="Project_Project.html">Project</a></li><li><a href="Todo_Todo.html">Todo</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Mon Oct 21 2024 07:47:46 GMT-0700 (Pacific Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
