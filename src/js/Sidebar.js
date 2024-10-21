@@ -188,12 +188,21 @@ export const createTestProjects = (numProjects, numTodos) => {
 */
 
 /**
- * Creates the main sidebar component
- * @constructor
- * @param {Project[]} projects The array of projects to be loaded into the sidebar 
- * @returns {Object} The sidebar component
+ * @typedef {Object} SidebarComponent
+ * @property {string} selected The UUID of the selected project
+ * @private
+ * @property {function(string)} select Selects a project from the sidebar based on project UUID
+ * @property {function()} html Generates sidebar HTML
+ * @property {function(Node)} render Injects the given node the sidebar HTML 
  */
-export const sidebar = (projects) => {
+
+/**
+ * Creates the main sidebar component
+ * @function
+ * @param {Project[]} projects The array of projects to be loaded into the sidebar 
+ * @returns {SidebarComponent} The sidebar component
+ */
+export const createSidebar = (projects) => {
     /**
      * @member {string} selected The UUID of the selected project
      * @private
@@ -201,7 +210,7 @@ export const sidebar = (projects) => {
     let selected = projects.length > 0 ? projects[0].uuid : null;
 
     /**
-     * Selects a project from the sidebar
+     * Selects a project from the sidebar based on project UUID
      * @method select
      * @param {string} uuid The UUID of the project to be selected
      * @returns {Project} The project selected
