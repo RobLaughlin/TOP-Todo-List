@@ -67,7 +67,8 @@ function projectClicked(e, sidebar) {
  * @param {Event} e The removal icon click event for projects
  * @param {Project[]} projects The array of projects in the sidebar
  */
-function projectRemoved(e, projects) {
+function projectRemoved(e, sidebar) {
+    let projects = sidebar.projects;
     let clickedProject = e.target.parentElement;
     let clickedItemContainer = clickedProject.parentElement;
     const UUID = clickedProject.dataset.uuid;
@@ -77,6 +78,16 @@ function projectRemoved(e, projects) {
         if (project.uuid === UUID) {
             projects.splice(i, 1);
             clickedItemContainer.remove();
+
+            // Select next project if 
+            // (1) selected project was removed and 
+            // (2) a next project is available.
+            // Selects the first project available if the removed selected project 
+            if (sidebar.currentProject() === project.uuid && projects.length > 0) {
+                const nextProjectIdx = i % projects.length;
+                const nextProjectUUID = projects[nextProjectIdx].uuid;
+                sidebar.select(nextProjectUUID);
+            }
             break;
         }
     }
@@ -225,7 +236,7 @@ export const createTestProjects = (numProjects, numTodos) => {
  */
 export const createSidebar = (projects) => {
     /**
-     * @member {string} selected The UUID of the selected project
+     * @member {?string} selected The UUID of the selected project
      * @private
      */
     let selected = projects.length > 0 ? projects[0].uuid : null;
@@ -233,7 +244,7 @@ export const createSidebar = (projects) => {
     /**
      * Selects a project from the sidebar based on project UUID
      * @method select
-     * @param {string} uuid The UUID of the project to be selected
+     * @param {?string} uuid The UUID of the project to be selected
      * @returns {Project} The project selected
      */
     function select(uuid) {
@@ -291,7 +302,7 @@ export const createSidebar = (projects) => {
             // Add remove button click event handler
             let removeProjectBtn = projectNode.querySelector(".removeProjectIcon");
             removeProjectBtn.addEventListener("click", e => {
-                projectRemoved(e, projects);
+                projectRemoved(e, this);
             });
             itemContainer.appendChild(projectNode);
     
@@ -322,12 +333,21 @@ export const createSidebar = (projects) => {
         root.replaceWith(this.html());
     };
 
+    /**
+     * Gets the UUID of the current selected project
+     * @returns {?string} The UUID of the selected project
+     */
+    function currentProject() {
+        return selected;
+    }
+
     return (() => {
         return {
             projects,
             select,
             html,
-            render
+            render,
+            currentProject
         };
     })();
 };
