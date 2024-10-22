@@ -33,16 +33,16 @@ function todoChanged(todo) {
 }
 PubSub.subscribe(TODO_CHANGED_EVENT, todoChanged);
 
-function projectSelected(uuid, projectNode) {
-    // Remove current selection
+function projectSelected(uuid) {
+    // Remove current selection if it exists
     let currentSelectedProject = document.querySelector(".itemContainer > .item.project.selected");
-    currentSelectedProject.classList.remove("selected");
-
+    if (currentSelectedProject !== null) {
+        currentSelectedProject.classList.remove("selected");
+    }
+    
     // Enable new selection
     let selectedProject = document.querySelector(`.sidebar .item.project[data-uuid="${uuid}"]`)
     selectedProject.classList.add("selected");
-    // [data-uuid=`${uuid}`]
-
 }
 PubSub.subscribe(PROJECT_SELECTED_EVENT, projectSelected);
 
@@ -241,7 +241,7 @@ export const createSidebar = (projects) => {
             const project = projects[i];
             if (project.uuid === uuid) {
                 selected = uuid;
-                PubSub.publish(PROJECT_SELECTED_EVENT, uuid)
+                PubSub.publish(PROJECT_SELECTED_EVENT, uuid);
                 return project;
             }
         }
