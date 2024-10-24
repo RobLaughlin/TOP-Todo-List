@@ -2,6 +2,8 @@ import folder from "../icons/folder.svg";
 import minusBox from "../icons/minus-box.svg";
 import note from "../icons/note.svg";
 import magnify from "../icons/magnify.svg";
+import plus from "../icons/plus.svg";
+
 import sanitizeHtml from "sanitize-html";
 import PubSub from "./PubSub";
 import { Project, Todo } from "./Todos";
@@ -33,6 +35,10 @@ function todoChanged(todo) {
 }
 PubSub.subscribe(TODO_CHANGED_EVENT, todoChanged);
 
+/**
+ * Event handler for selecting a project
+ * @param {?string} uuid The uuid of the selected project
+ */
 function projectSelected(uuid) {
     // Remove current selection if it exists
     let currentSelectedProject = document.querySelector(".itemContainer > .item.project.selected");
@@ -41,11 +47,19 @@ function projectSelected(uuid) {
     }
     
     // Enable new selection
-    let selectedProject = document.querySelector(`.sidebar .item.project[data-uuid="${uuid}"]`)
-    selectedProject.classList.add("selected");
+    if (uuid !== null) {
+        let selectedProject = document.querySelector(`.sidebar .item.project[data-uuid="${uuid}"]`)
+        selectedProject.classList.add("selected");
+    }
 }
 PubSub.subscribe(PROJECT_SELECTED_EVENT, projectSelected);
 
+/**
+ * 
+ * @param {Event} e The click event for clicking a project 
+ * @param {Object} sidebar The entire sidebar component
+ * @returns 
+ */
 function projectClicked(e, sidebar) {
     let target = null;
     if (e.target === e.currentTarget) {
@@ -147,6 +161,43 @@ function searchBarUnFocused(e) {
 }
 
 /**
+ * Event handler for adding todos
+ */
+function addTodoBtnClicked(projectUUID) {
+    let dialog = document.getElementsByClassName("addTodoModal")[0];
+    dialog.show();
+
+    // Dialog container
+    let dialogContainer = dialog.parentElement;
+    dialogContainer.classList.toggle("invisible");
+    dialogContainer.dataset['project_uuid'] = projectUUID;
+}
+
+/**
+ * Event handler for submitting the add todo form
+ * @param {Event} e The click event for the add todo submit button 
+ */
+function addTodoSubmitClicked(e) {
+    e.preventDefault();
+    let dialog = document.getElementsByClassName("addTodoModal")[0];
+    dialog.parentElement.classList.toggle("invisible");
+    delete dialog.parentElement.dataset["project_uuid"];
+    dialog.close();
+}
+
+/**
+ * Event handler for closing the add todo form
+ * @param {Event} e The click event for the add todo close button 
+ */
+function addTodoCloseClicked(e) {
+    e.preventDefault();
+    let dialog = document.getElementsByClassName("addTodoModal")[0];
+    dialog.parentElement.classList.toggle("invisible");
+    delete dialog.parentElement.dataset["project_uuid"];
+    dialog.close();
+}
+
+/**
  * @module Sidebar/Template
  */
 
@@ -198,6 +249,58 @@ const todoSidebarTemplate = todo => {
             <img src="${minusBox}" alt="Minus box icon, click to remove to-do under selected project" class="icon removeProjectIcon">
         </div>
     `;
+}
+
+/**
+ * The template for adding todos
+ * @returns The add todo item HTML
+ */
+const addTodoTemplate = () => {
+    return `
+        <div class="item addTodoContainer todo invisible">
+            <span class="text">Add Todo</span>
+            <img src="${plus}" alt="Plus icon, click to add a new to-do" class="icon">
+        </div>
+    `;
+}
+
+/**
+ * Add todo modal template
+ * @returns The add todo modal HTML
+ */
+const addTodoModalTemplate  = () => {
+    return `
+        <div class="addTodoModalContainer invisible">
+            <dialog class="addTodoModal">
+                <form method="dialog" id="AddTodoForm">
+                    <div class="formRow" id="TodoTitleContainer">
+                        <label for="TodoTitle">Title:</label>
+                        <input type="text" id="TodoTitle" placeholder="Todo Title" />
+                    </div>
+                    <div class="formRow" id="TodoDateContainer">
+                        <label for="TodoDate">Due Date:</label>
+                        <input type="date" id="TodoDate"/>
+                    </div>
+                    <div class="formRow" id="TodoPriorityContainer">
+                        <label for="TodoPriority">Priority:</label>
+                        <input type="number" id="TodoPriority"/>
+                    </div>
+                    <div class="formRow" id="TodoDescriptionContainer">
+                        <textarea id="TodoDescription" placeholder="Description of todo goes here"></textarea>
+                    </div>
+                    <div class="formRow" id="TodoNotesContainer">
+                        <textarea id="TodoNotes" placeholder="Todo notes goes here"></textarea>
+                    </div>
+                    <div class="formRow" id="AddTodoBtnContainer">
+                        <button id="AddTodoBtn">Add Todo</button>
+                    </div>
+                    <div class="formRow" id="TodoCloseBtnContainer">
+                        <button id="TodoCloseBtn">Close</button>
+                    </div>
+                </form>  
+            </dialog>
+        </div>
+    `
 }
 
 /**
@@ -270,6 +373,21 @@ export const createSidebar = (projects) => {
         sidebarTemplateNode.innerHTML = sidebarTemplate();
         let sidebarNode = sidebarTemplateNode.content.querySelector("div");
         
+        // Implement add todo modal
+        let addTodoModalTemplateNode = document.createElement("template");
+        addTodoModalTemplateNode.innerHTML = addTodoModalTemplate();
+
+        // Implement behaviour for the add todo modal submit button
+        let addTodoModalNode = addTodoModalTemplateNode.content.querySelector("div");
+        let addTodoBtn = addTodoModalNode.querySelector("#AddTodoBtn");
+        addTodoBtn.addEventListener("click", addTodoSubmitClicked);
+
+        // Implement behaviour for the close button in the todo modal
+        let closeBtn = addTodoModalNode.querySelector("#TodoCloseBtn");
+        closeBtn.addEventListener("click", addTodoCloseClicked);
+        
+        sidebarNode.appendChild(addTodoModalNode);
+
         // Implement search bar behaviour
         let searchInput = sidebarNode.querySelector(".search");
         searchInput.addEventListener("focusin", searchBarFocused);
@@ -317,7 +435,18 @@ export const createSidebar = (projects) => {
                     todoRemoved(e, project);
                 });
                 itemContainer.appendChild(todoNode);
-            } 
+            }
+
+            // Append add todo item to end of todos
+            let addTodoItem = document.createElement("template");
+            addTodoItem.innerHTML = addTodoTemplate();
+            addTodoItem = addTodoItem.content.querySelector("div");
+            
+            // Implement add todo behaviour
+            let plusIcon = addTodoItem.getElementsByClassName("icon")[0];
+            plusIcon.addEventListener("click", () => {addTodoBtnClicked(project.uuid)});
+
+            itemContainer.appendChild(addTodoItem);
             sidebarNode.appendChild(itemContainer);
         }
 
@@ -351,3 +480,4 @@ export const createSidebar = (projects) => {
         };
     })();
 };
+
