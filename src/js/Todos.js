@@ -1,15 +1,60 @@
 import PubSub from "./PubSub";
 import { v4 as uuidv4 } from 'uuid';
 
-export class Todo {
+class Listenable {
+    _validEvents = new Set();
+    _eventHandlers = new Map();
+
+    /**
+     * Creates a set of what events are considered valid
+     * @param {Set<string>} validEvents A set of valid events
+     */
+    constructor(validEvents) {
+        this._validEvents = validEvents;
+
+        this._validEvents.forEach(e => {
+            this._eventHandlers.set(e, new Map());
+        });
+    }
+
+    /**
+     * Adds an event listener to this object. The event id must be a valid event in Todo.EVENTS,
+     * whereas the callback id can be anything.
+     * @param {string} event The event id to trigger
+     * @param {string} id The id of the callback function
+     * @param {Function(Todo)} callback The function to be called when the event triggers
+     */
+    addEventListener(event, id, callback) {
+        if (!(event in this._validEvents)) {
+            throw new Error(`Invalid event ${event}`);
+        }
+        this._eventHandlers.get(event).set(id, callback);
+    }
+
+    /**
+     * Removes an event listener from this object. The event id must be a valid event in Todo.EVENTS,
+     * whereas the callback id can be anything.
+     * @param {string} event The event id to trigger
+     * @param {string} id The id of the callback function
+     */
+    removeEventListener(event, id) {
+        if ((this._validEvents.has(event)) && (this._eventHandlers.get(event).has(id))) {
+            delete this._eventHandlers.get(event).get(id);
+        }
+    }
+};
+
+export class Todo extends Listenable {
+    static EVENTS = new Map(Object.entries({
+        onChange: "onChange"
+    }));
+
     #title;
     #description;
     #dueDate;
     #priority;
     #notes;
     #uuid = uuidv4();
-
-    onChange = null;
 
     /**
      * Creates a Todo
@@ -19,57 +64,67 @@ export class Todo {
      * @param {Date} dueDate The due date of the Todo
      * @param {number} priority The priority of the Todo (an integer, lower is higher priority)
      * @param {string} [notes=""] Optional notes to include with the Todo
-     * @param {?string} [onChange=null] The event to publish when a todo is changed.
-     * If onChange is null, then no event will be published. 
-     * Otherwise, publish using the current Todo object as data.
      */
-    constructor(title, description, dueDate, priority, notes="", onChange=null) {
+    constructor(title, description, dueDate, priority, notes="") {
+        super(Todo.EVENTS.values());
         this.#title = title;
         this.#description = description;
         this.#dueDate = dueDate;
         this.#priority = priority;
         this.#notes = notes;
-        this.onChange = onChange;
     }
 
     get title() { return this.#title; }
     set title(value) {
         this.#title = value;
-        if (this.onChange !== null) { PubSub.publish(this.onChange, this) };
+        this.#onChange();
     }
 
     get description() { return this.#description; }
     set description(value) {
         this.#description = value;
-        if (this.onChange !== null) { PubSub.publish(this.onChange, this) };
+        this.#onChange();
     }
 
     get dueDate() { return this.#dueDate; }
     set dueDate(value) {
         this.#dueDate = value;
-        if (this.onChange !== null) { PubSub.publish(this.onChange, this) };
+        this.#onChange();
     }
 
     get priority() { return this.#priority; }
     set priority(value) {
         this.#priority = value;
-        if (this.onChange !== null) { PubSub.publish(this.onChange, this) };
+        this.#onChange();
     }
 
     get notes() { return this.#notes; }
     set notes(value) {
         this.#notes = value;
-        if (this.onChange !== null) { PubSub.publish(this.onChange, this) };
+        this.#onChange();
     }
 
     get uuid() { return this.#uuid; }
+
+    /**
+     * Calls every callback subscribed to the onChange event
+     * @private
+     */
+    #onChange() {
+        for (const [_, callback] of this._eventHandlers.get(Todo.EVENTS.get('onChange'))) {
+            callback(this);
+        }
+    }
 }
 
-export class Project {
+export class Project extends Listenable {
+    static EVENTS = new Map(Object.entries({
+        onChange: "onChange"
+    }));
+
     #name = ""
     #todos = []
-    onChange = null
-    #uuid = uuidv4();
+    #uuid = uuidv4()
 
     /**
      * A container for an array of Todos, with a given name
@@ -77,10 +132,10 @@ export class Project {
      * @param {Todo[]} [todos=[]] The array of todos
      * @param {?string} [onChange=null] The event to be broadcast when a todo is changed
      */
-    constructor(name, todos=[], onChange=null) {
+    constructor(name, todos=[]) {
+        super(Project.EVENTS.values());
         this.#name = name;
         this.#todos = [...todos];
-        this.onChange = onChange;
     }
 
     get name() { return this.#name; }
@@ -103,7 +158,7 @@ export class Project {
      */
     add(todo) {
         this.#todos.push(todo);
-        if (this.onChange !== null) { PubSub.publish(this.onChange, this); }
+        this.#onChange();
     }
 
     /**
@@ -115,7 +170,7 @@ export class Project {
             throw new RangeError("Index of todo out of range.");
         }
         this.#todos.splice(idx, 1);
-        if (this.onChange !== null) { PubSub.publish(this.onChange, this); }
+        this.#onChange();
     }
 
     /**
@@ -127,5 +182,15 @@ export class Project {
             throw new RangeError("Index of todo out of range.");
         }
         return this.#todos[idx];
+    }
+
+    /**
+     * Calls every callback subscribed to the onChange event
+     * @private
+     */
+    #onChange() {
+        for (const [_, callback] of this._eventHandlers.get(Project.EVENTS.get('onChange'))) {
+            callback(this);
+        }
     }
 } 
