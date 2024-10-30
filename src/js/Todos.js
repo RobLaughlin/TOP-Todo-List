@@ -39,15 +39,15 @@ class Listenable {
      */
     removeEventListener(event, id) {
         if ((this._validEvents.has(event)) && (this._eventHandlers.get(event).has(id))) {
-            delete this._eventHandlers.get(event).get(id);
+            this._eventHandlers.get(event).delete(id);
         }
     }
 };
 
 export class Todo extends Listenable {
-    static EVENTS = new Map(Object.entries({
+    static EVENTS = {
         onChange: "onChange"
-    }));
+    };
 
     #title;
     #description;
@@ -66,7 +66,7 @@ export class Todo extends Listenable {
      * @param {string} [notes=""] Optional notes to include with the Todo
      */
     constructor(title, description, dueDate, priority, notes="") {
-        super(Todo.EVENTS.values());
+        super(Object.values(Todo.EVENTS));
         this.#title = title;
         this.#description = description;
         this.#dueDate = dueDate;
@@ -118,9 +118,9 @@ export class Todo extends Listenable {
 }
 
 export class Project extends Listenable {
-    static EVENTS = new Map(Object.entries({
+    static EVENTS = {
         onChange: "onChange"
-    }));
+    };
 
     #name = ""
     #todos = []
@@ -133,7 +133,7 @@ export class Project extends Listenable {
      * @param {?string} [onChange=null] The event to be broadcast when a todo is changed
      */
     constructor(name, todos=[]) {
-        super(Project.EVENTS.values());
+        super(Object.values(Project.EVENTS));
         this.#name = name;
         this.#todos = [...todos];
     }
@@ -189,7 +189,7 @@ export class Project extends Listenable {
      * @private
      */
     #onChange() {
-        for (const [_, callback] of this._eventHandlers.get(Project.EVENTS.get('onChange'))) {
+        for (const [_, callback] of this._eventHandlers.get(Project.EVENTS['onChange'])) {
             callback(this);
         }
     }
