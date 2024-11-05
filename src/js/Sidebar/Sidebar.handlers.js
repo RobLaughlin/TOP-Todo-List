@@ -2,6 +2,10 @@
  * @module Sidebar/EventHandler
  */
 
+import sanitizeHtml from "sanitize-html";
+import { Todo } from "../Todos";
+
+
 /**
  * Event handler for selecting a project
  * @param {?string} uuid The uuid of the selected project
@@ -151,7 +155,7 @@ export function addTodoBtnClicked(projectUUID) {
  * Event handler for submitting the add todo form
  * @param {Event} e The click event for the add todo submit button 
  */
-export function addTodoSubmitClicked(e) {
+export function addTodoSubmitClicked(sidebar, projects, e) {
     e.preventDefault();
 
     // Check if form is valid
@@ -160,6 +164,35 @@ export function addTodoSubmitClicked(e) {
     form.reportValidity();
 
     if (form.checkValidity()) {
+        const data = new FormData(form);
+        let entries = new Map();
+
+        data.entries().forEach(([id, data]) => {
+            entries.set(id, sanitizeHtml(data));
+        });
+
+        const title = entries.get("TodoTitle");
+        const [year, month, day] = entries.get("TodoDate").split("-");
+        const date = new Date(year, month, day);
+        const priority = parseInt(entries.get("TodoPriority"));
+        const desc = entries.get("TodoDescription");
+        const notes = entries.get("TodoNotes");
+
+        const todo = new Todo(title, desc, date, priority, notes);
+        const projectId = dialog.dataset.project_uuid;
+
+        for (let i = 0; i < projects.length; i++) {
+            let project = projects[i];
+            if (project.uuid === projectId) {
+                project.add(todo);
+                console.log(todo);
+                console.log(todo.dueDate);
+                break;
+            }
+        }
+
+        sidebar.render();
+
         let backdrop = dialog.parentElement;
         backdrop.classList.toggle("invisible");
 

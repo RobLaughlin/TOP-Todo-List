@@ -51,7 +51,7 @@ export const createSidebar = (projects) => {
         // Implement behaviour for the add todo modal submit button
         let addTodoModalNode = addTodoModalTemplateNode.content.querySelector("div");
         let addTodoBtn = addTodoModalNode.querySelector("#AddTodoBtn");
-        addTodoBtn.addEventListener("click", handler.addTodoSubmitClicked);
+        addTodoBtn.addEventListener("click", e => { handler.addTodoSubmitClicked(this, projects, e) });
 
         // Implement behaviour for the close button in the todo modal
         let closeBtn = addTodoModalNode.querySelector("#TodoCloseBtn");
