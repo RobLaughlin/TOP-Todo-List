@@ -86,7 +86,7 @@ export const createSidebar = (projects) => {
 
             // Add folder button click event handler
             let folderBtn = projectNode.querySelector(".folder.icon");
-            folderBtn.addEventListener("click", handler.folderBtnClicked);
+            folderBtn.addEventListener("click", e => { handler.folderBtnClicked(this, projects, e); });
     
             // Add remove button click event handler
             let removeProjectBtn = projectNode.querySelector(".removeProjectIcon");
@@ -105,6 +105,11 @@ export const createSidebar = (projects) => {
                 removeTodoBtn.addEventListener("click", e => {
                     handler.todoRemoved(e, project);
                 });
+
+                if (project.opened) {
+                    todoNode.classList.remove("invisible");
+                }
+
                 itemContainer.appendChild(todoNode);
             }
 
@@ -113,6 +118,10 @@ export const createSidebar = (projects) => {
             addTodoItem.innerHTML = template.addTodo();
             addTodoItem = addTodoItem.content.querySelector("div");
             
+            if (project.opened) {
+                addTodoItem.classList.remove("invisible");
+            }
+
             // Implement add todo behaviour
             let plusIcon = addTodoItem.getElementsByClassName("icon")[0];
             plusIcon.addEventListener("click", () => {handler.addTodoBtnClicked(project.uuid)});

@@ -100,12 +100,18 @@ export function todoRemoved(e, project) {
  * The event called when a folder icon is clicked on a project
  * @param {Event} e The folder icon click event for projects
  */
-export function folderBtnClicked(e) {
-    let projectContainer = e.target.parentElement.parentElement;
-    let todos = projectContainer.querySelectorAll(".todo");
-    todos.forEach(todo => {
-        todo.classList.toggle("invisible");
-    });
+export function folderBtnClicked(sidebar, projects, e) {
+    const projectId = e.target.parentElement.dataset.uuid;
+    console.log(projectId);
+    for (let i = 0; i < projects.length; i++) {
+        let project = projects[i];
+        if (project.uuid === projectId) {
+            project.opened ? project.close() : project.open();
+            break;
+        }
+    }
+
+    sidebar.render();
 }
 
 /**

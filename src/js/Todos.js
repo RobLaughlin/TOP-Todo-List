@@ -95,6 +95,7 @@ export class Todo extends ChangeListener {
 }
 
 export class Project extends ChangeListener {
+    #opened = false
     #name = ""
     #todos = []
     #uuid = uuidv4()
@@ -109,6 +110,8 @@ export class Project extends ChangeListener {
         this.#name = name;
         this.#todos = [...todos];
     }
+
+    get opened() { return this.#opened; }
 
     get name() { return this.#name; }
 
@@ -154,5 +157,21 @@ export class Project extends ChangeListener {
             throw new RangeError("Index of todo out of range.");
         }
         return this.#todos[idx];
+    }
+
+    /**
+     * Opens the project
+     */
+    open() { 
+        this.#opened = true; 
+        this.changed();
+    }
+
+    /**
+     * Closes the project
+     */
+    close() {
+        this.#opened = false;
+        this.changed();
     }
 } 
