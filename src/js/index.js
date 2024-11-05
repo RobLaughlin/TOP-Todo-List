@@ -2,7 +2,8 @@ import "./../css/sidebar.css";
 import "./../css/todos.css";
 import "./../css/index.css";
 
-import { createSidebar, createTestProjects } from "./Sidebar";
+import { createSidebar } from "./Sidebar/Sidebar.component";
+import { createTestProjects } from "./Sidebar/Sidebar.test";
 
 // Create test projects
 let {projects, selected} = createTestProjects(5, 5);
