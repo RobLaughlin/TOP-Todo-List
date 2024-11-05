@@ -274,16 +274,16 @@ const addTodoModalTemplate  = () => {
             <dialog class="addTodoModal">
                 <form method="dialog" id="AddTodoForm">
                     <div class="formRow" id="TodoTitleContainer">
-                        <label for="TodoTitle">Title:</label>
-                        <input type="text" id="TodoTitle" placeholder="Todo Title" />
+                        <label for="TodoTitle" class="required-field">Title:</label>
+                        <input type="text" id="TodoTitle" placeholder="Todo Title" required/>
                     </div>
                     <div class="formRow" id="TodoDateContainer">
-                        <label for="TodoDate">Due Date:</label>
-                        <input type="date" id="TodoDate"/>
+                        <label for="TodoDate" class="required-field">Due Date:</label>
+                        <input type="date" id="TodoDate" required/>
                     </div>
                     <div class="formRow" id="TodoPriorityContainer">
-                        <label for="TodoPriority">Priority:</label>
-                        <input type="number" id="TodoPriority"/>
+                        <label for="TodoPriority" class="required-field">Priority:</label>
+                        <input type="number" id="TodoPriority" required/>
                     </div>
                     <div class="formRow" id="TodoDescriptionContainer">
                         <textarea id="TodoDescription" placeholder="Description of todo goes here"></textarea>

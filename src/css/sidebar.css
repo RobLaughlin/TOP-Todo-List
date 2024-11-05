@@ -211,6 +211,13 @@
     margin-right: 8px;
 }
 
+.sidebar .addTodoModal .formRow label.required-field::before {
+    content: "*";
+    margin-right: 4px;
+    font-size: 16px;
+    color: red;
+}
+
 .sidebar .addTodoModal .formRow input
 {
     margin-right: 8px;
