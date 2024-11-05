@@ -5,35 +5,11 @@ import magnify from "../icons/magnify.svg";
 import plus from "../icons/plus.svg";
 
 import sanitizeHtml from "sanitize-html";
-import PubSub from "./PubSub";
 import { Project, Todo } from "./Todos";
-
-export const PROJECTS_CHANGED_EVENT = "projectsChanged";
-export const PROJECT_CHANGED_EVENT = "projectChanged";
-export const TODO_CHANGED_EVENT = "todoChanged";
-export const PROJECT_SELECTED_EVENT = "projectSelected";
 
 /**
  * @module Sidebar/EventHandler
  */
-
-/**
- * Event that gets triggered when a project gets changed
- * @param {Project} project The project that was changed
- */
-function projectChanged(project) {
-
-}
-PubSub.subscribe(PROJECT_CHANGED_EVENT, projectChanged);
-
-/**
- * Event that gets triggered when a todo gets changed
- * @param {Todo} todo The todo that was changed
- */
-function todoChanged(todo) {
-
-}
-PubSub.subscribe(TODO_CHANGED_EVENT, todoChanged);
 
 /**
  * Event handler for selecting a project
@@ -52,10 +28,9 @@ function projectSelected(uuid) {
         selectedProject.classList.add("selected");
     }
 }
-PubSub.subscribe(PROJECT_SELECTED_EVENT, projectSelected);
 
 /**
- * 
+ * The event handler for when a project is clicked
  * @param {Event} e The click event for clicking a project 
  * @param {Object} sidebar The entire sidebar component
  * @returns 
@@ -73,7 +48,7 @@ function projectClicked(e, sidebar) {
     }
     
     let selectedUUID = target.dataset.uuid;
-    sidebar.select(selectedUUID);
+    sidebar.select(selectedUUID, projectSelected);
 }
 
 /**
@@ -333,9 +308,9 @@ const addTodoModalTemplate  = () => {
 export const createTestProjects = (numProjects, numTodos) => {
     let projects = []
     for (let i = 0; i < numProjects; i++) {
-        let project = new Project(`Project ${i}`, [], PROJECT_CHANGED_EVENT);
+        let project = new Project(`Project ${i}`, []);
         for (let j = 0; j < numTodos; j++) {
-            project.add(new Todo(`Todo ${j}`, "description", new Date(), j, "notes", TODO_CHANGED_EVENT));
+            project.add(new Todo(`Todo ${j}`, "description", new Date(), j, "notes"));
         }
         projects.push(project);
     }
@@ -367,12 +342,12 @@ export const createSidebar = (projects) => {
      * @param {?string} uuid The UUID of the project to be selected
      * @returns {Project} The project selected
      */
-    function select(uuid) {
+    function select(uuid, callback) {
         for (let i = 0; i < projects.length; i++) {
             const project = projects[i];
             if (project.uuid === uuid) {
                 selected = uuid;
-                PubSub.publish(PROJECT_SELECTED_EVENT, uuid);
+                callback(uuid);
                 return project;
             }
         }
