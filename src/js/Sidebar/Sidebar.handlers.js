@@ -56,10 +56,15 @@ export function projectRemoved(e, sidebar) {
     let clickedProject = e.target.parentElement;
     let clickedItemContainer = clickedProject.parentElement;
     const UUID = clickedProject.dataset.uuid;
- 
+    
     for (let i = 0; i < projects.length; i++) {
         const project = projects[i];
+        
         if (project.uuid === UUID) {
+            console.log(project);
+            if (!confirm(`Are you sure you want to remove ${project.name}?`)) {
+                return;
+            }
             projects.splice(i, 1);
             clickedItemContainer.remove();
 
@@ -89,6 +94,9 @@ export function todoRemoved(e, project) {
     for (let i = 0; i < project.size(); i++) {
         const todo = project.get(i);
         if (todo.uuid === UUID) {
+            if (!confirm(`Are you sure you want to remove ${todo.title} in ${project.name}?`)) {
+                return;
+            }
             project.remove(i);
             clickedTodo.remove();
             break;
@@ -102,7 +110,6 @@ export function todoRemoved(e, project) {
  */
 export function folderBtnClicked(sidebar, projects, e) {
     const projectId = e.target.parentElement.dataset.uuid;
-    console.log(projectId);
     for (let i = 0; i < projects.length; i++) {
         let project = projects[i];
         if (project.uuid === projectId) {
