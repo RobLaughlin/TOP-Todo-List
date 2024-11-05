@@ -161,16 +161,24 @@ function searchBarUnFocused(e) {
 }
 
 /**
- * Event handler for adding todos
+ * Event handler for when the add Todo button
+ * @param {string} projectUUID The UUID of the corresponding project
  */
 function addTodoBtnClicked(projectUUID) {
     let dialog = document.getElementsByClassName("addTodoModal")[0];
+
+    // Set default date to today's date
+    let dateInputField = dialog.querySelector("#TodoDate");
+    dateInputField.valueAsDate = new Date();
+
     dialog.show();
 
-    // Dialog container
-    let dialogContainer = dialog.parentElement;
-    dialogContainer.classList.toggle("invisible");
-    dialogContainer.dataset['project_uuid'] = projectUUID;
+    // Make backdrop visible
+    let backdrop = dialog.parentElement;
+    backdrop.classList.remove("invisible");
+
+    // Give the dialog the project UUID until form/dialog is submitted/closed.
+    dialog.dataset['project_uuid'] = projectUUID;
 }
 
 /**
@@ -179,10 +187,19 @@ function addTodoBtnClicked(projectUUID) {
  */
 function addTodoSubmitClicked(e) {
     e.preventDefault();
+
+    // Check if form is valid
     let dialog = document.getElementsByClassName("addTodoModal")[0];
-    dialog.parentElement.classList.toggle("invisible");
-    delete dialog.parentElement.dataset["project_uuid"];
-    dialog.close();
+    let form = dialog.querySelector("form");
+    form.reportValidity();
+
+    if (form.checkValidity()) {
+        let backdrop = dialog.parentElement;
+        backdrop.classList.toggle("invisible");
+
+        delete dialog.dataset["project_uuid"];
+        dialog.close();
+    }
 }
 
 /**
@@ -193,7 +210,7 @@ function addTodoCloseClicked(e) {
     e.preventDefault();
     let dialog = document.getElementsByClassName("addTodoModal")[0];
     dialog.parentElement.classList.toggle("invisible");
-    delete dialog.parentElement.dataset["project_uuid"];
+    delete dialog.dataset["project_uuid"];
     dialog.close();
 }
 
@@ -272,30 +289,30 @@ const addTodoModalTemplate  = () => {
     return `
         <div class="addTodoModalContainer invisible">
             <dialog class="addTodoModal">
-                <form method="dialog" id="AddTodoForm">
+                <form method="dialog" id="AddTodoForm" autocomplete="off">
                     <div class="formRow" id="TodoTitleContainer">
                         <label for="TodoTitle" class="required-field">Title:</label>
-                        <input type="text" id="TodoTitle" placeholder="Todo Title" required/>
+                        <input type="text" id="TodoTitle" name="TodoTitle" placeholder="Todo Title" required/>
                     </div>
                     <div class="formRow" id="TodoDateContainer">
                         <label for="TodoDate" class="required-field">Due Date:</label>
-                        <input type="date" id="TodoDate" required/>
+                        <input type="date" id="TodoDate" name="TodoDate" required/>
                     </div>
                     <div class="formRow" id="TodoPriorityContainer">
                         <label for="TodoPriority" class="required-field">Priority:</label>
-                        <input type="number" id="TodoPriority" required/>
+                        <input type="number" id="TodoPriority" name="TodoPriority" required value="0"/>
                     </div>
                     <div class="formRow" id="TodoDescriptionContainer">
-                        <textarea id="TodoDescription" placeholder="Description of todo goes here"></textarea>
+                        <textarea id="TodoDescription" name="TodoDescription" placeholder="Description of todo goes here"></textarea>
                     </div>
                     <div class="formRow" id="TodoNotesContainer">
-                        <textarea id="TodoNotes" placeholder="Todo notes goes here"></textarea>
+                        <textarea id="TodoNotes" name="TodoNotes" placeholder="Todo notes goes here"></textarea>
                     </div>
                     <div class="formRow" id="AddTodoBtnContainer">
-                        <button id="AddTodoBtn">Add Todo</button>
+                        <button id="AddTodoBtn" name="AddTodoBtn" onSubmit="return confirm('U sure?')">Add Todo</button>
                     </div>
                     <div class="formRow" id="TodoCloseBtnContainer">
-                        <button id="TodoCloseBtn">Close</button>
+                        <button id="TodoCloseBtn" name="TodoCloseBtn" formnovalidate>Close</button>
                     </div>
                 </form>  
             </dialog>
