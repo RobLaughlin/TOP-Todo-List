@@ -98,7 +98,7 @@ export class Project extends ChangeListener {
     #opened = false
     #name = ""
     #todos = []
-    #uuid = uuidv4()
+    uuid = uuidv4()
 
     /**
      * A container for an array of Todos, with a given name
@@ -114,10 +114,8 @@ export class Project extends ChangeListener {
     get opened() { return this.#opened; }
 
     get name() { return this.#name; }
-
+    
     get todos() { return [...this.#todos]}
-
-    get uuid() { return this.#uuid; }
 
     /**
      * The number of todos in the project

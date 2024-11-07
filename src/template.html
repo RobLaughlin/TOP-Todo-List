@@ -7,7 +7,53 @@
 </head>
 <body>
     <div class="content">
-        <div class="sidebar"></div>
+        <div class="sidebar">
+            <div class="titleContainer">
+                <h1 class="title">Projects</h1>
+            </div>
+            <div class="searchContainer">
+                <div class="searchBar">
+                    <img src="./icons/magnify.svg" alt="Magnifying glass icon" class="icon">
+                    <input type="search" placeholder="Search" class="search">
+                </div>
+            </div>
+            <div class="addTodoModalContainer invisible">
+                <dialog class="addTodoModal">
+                    <form method="dialog" id="AddTodoForm" autocomplete="off">
+                        <div class="formRow" id="TodoTitleContainer">
+                            <label for="TodoTitle" class="required-field">Title:</label>
+                            <input type="text" id="TodoTitle" name="TodoTitle" placeholder="Todo Title" required/>
+                        </div>
+                        <div class="formRow" id="TodoDateContainer">
+                            <label for="TodoDate" class="required-field">Due Date:</label>
+                            <input type="date" id="TodoDate" name="TodoDate" required/>
+                        </div>
+                        <div class="formRow" id="TodoPriorityContainer">
+                            <label for="TodoPriority" class="required-field">Priority:</label>
+                            <input type="number" id="TodoPriority" name="TodoPriority" required value="0"/>
+                        </div>
+                        <div class="formRow" id="TodoDescriptionContainer">
+                            <textarea id="TodoDescription" name="TodoDescription" placeholder="Description of todo goes here"></textarea>
+                        </div>
+                        <div class="formRow" id="TodoNotesContainer">
+                            <textarea id="TodoNotes" name="TodoNotes" placeholder="Todo notes goes here"></textarea>
+                        </div>
+                        <div class="formRow" id="AddTodoBtnContainer">
+                            <button id="AddTodoBtn" name="AddTodoBtn" onSubmit="return confirm('U sure?')">Add Todo</button>
+                        </div>
+                        <div class="formRow" id="TodoCloseBtnContainer">
+                            <button id="TodoCloseBtn" name="TodoCloseBtn" formnovalidate>Close</button>
+                        </div>
+                    </form>  
+                </dialog>
+            </div>
+            <div class="itemContainer">
+                <div class="item addProjectContainer">
+                    <input type="text" class="addProjectTextbox" placeholder="Project Name" />
+                    <img src="./icons/plus.svg" alt="Plus icon, click to add a new project" class="icon">
+                </div>
+            </div>
+        </div>
         <div class="todos"></div>
     </div>
 

@@ -14,6 +14,8 @@ export const createSidebar = (projects) => {
      * @private
      */
     let selected = projects.length > 0 ? projects[0].uuid : null;
+    let searchKey = "";
+    let initialRender = true;
 
     /**
      * Selects a project from the sidebar based on project UUID
@@ -34,41 +36,46 @@ export const createSidebar = (projects) => {
         throw new Error(`Project UUID ${uuid} not found.`);      
     };
 
-    /**
-     * Generates sidebar HTML
-     * @method html
-     * @returns {string} The sidebar HTML string
-     */
-    function html() {
-        let sidebarTemplateNode = document.createElement("template");
-        sidebarTemplateNode.innerHTML = template.sidebar();
-        let sidebarNode = sidebarTemplateNode.content.querySelector("div");
-        
-        // Implement add todo modal
-        let addTodoModalTemplateNode = document.createElement("template");
-        addTodoModalTemplateNode.innerHTML = template.addTodoModal();
+    function setSearchKey(key) {
+        searchKey = key;
+    }
 
-        // Implement behaviour for the add todo modal submit button
-        let addTodoModalNode = addTodoModalTemplateNode.content.querySelector("div");
-        let addTodoBtn = addTodoModalNode.querySelector("#AddTodoBtn");
-        addTodoBtn.addEventListener("click", e => { handler.addTodoSubmitClicked(this, projects, e) });
+    function filter() {
+        const key = searchKey.toLowerCase();
+        let filtered = [];
 
-        // Implement behaviour for the close button in the todo modal
-        let closeBtn = addTodoModalNode.querySelector("#TodoCloseBtn");
-        closeBtn.addEventListener("click", handler.addTodoCloseClicked);
-        
-        sidebarNode.appendChild(addTodoModalNode);
-
-        // Implement search bar behaviour
-        let searchInput = sidebarNode.querySelector(".search");
-        searchInput.addEventListener("focusin", handler.searchBarFocused);
-        searchInput.addEventListener("focusout", handler.searchBarUnFocused);
-        searchInput.addEventListener("keyup", handler.searchKeyPressed);
-
-        // Inject projects and todos
         for (let p = 0; p < projects.length; p++) {
-            let project = projects[p];
-    
+            const project = projects[p];
+            const filteredTodos = project.todos.filter(todo => {
+                return todo.title.toLowerCase().includes(key);
+            });
+            console.log(filteredTodos);
+
+            // If neither the project name nor any of the todos in the project match the search, hide the project entirely
+            const projectMatch = project.name.toLowerCase().includes(key);
+            if (!projectMatch && filteredTodos.length === 0) {
+                continue;
+            }
+
+            const filteredProject = new Project(project.name, Array.from(filteredTodos));
+            filteredProject.uuid = project.uuid;
+            if (project.opened) {
+                filteredProject.open();
+            }
+            filtered.push(filteredProject);
+        }
+
+        return filtered;
+    }
+
+    /**
+     * Generates the project nodes to be inserted into the sidebar
+     * @method createProjectNodes
+     * @returns {Node[]} The list of project nodes 
+     */
+    function createProjectNodes() {
+        let filteredProjects = searchKey === "" ? projects : filter(searchKey);
+        let projectNodes = filteredProjects.map((project, p) => {
             let itemContainer = document.createElement("div");
             itemContainer.classList.add("itemContainer");
     
@@ -128,18 +135,114 @@ export const createSidebar = (projects) => {
             plusIcon.addEventListener("click", () => {handler.addTodoBtnClicked(project.uuid)});
 
             itemContainer.appendChild(addTodoItem);
-            sidebarNode.appendChild(itemContainer);
-        }
 
-        let addProjectTemplate = document.createElement("template");
-        addProjectTemplate.innerHTML = template.addProject();
-        let addProjectNode = addProjectTemplate.content.querySelector("div");
+            return itemContainer;
+        });
+
+        return projectNodes;
+
+        // let sidebarTemplateNode = document.createElement("template");
+        // sidebarTemplateNode.innerHTML = template.sidebar();
+        // let sidebarNode = sidebarTemplateNode.content.querySelector("div");
         
-        let addProjectBtn = addProjectNode.querySelector(".icon");
-        addProjectBtn.addEventListener("click", e => {handler.addProjectBtnClicked(this, projects, e)});
+        // // Implement add todo modal
+        // let addTodoModalTemplateNode = document.createElement("template");
+        // addTodoModalTemplateNode.innerHTML = template.addTodoModal();
 
-        sidebarNode.appendChild(addProjectNode);
-        return sidebarNode;
+        // // Implement behaviour for the add todo modal submit button
+        // let addTodoModalNode = addTodoModalTemplateNode.content.querySelector("div");
+        // let addTodoBtn = addTodoModalNode.querySelector("#AddTodoBtn");
+        // addTodoBtn.addEventListener("click", e => { handler.addTodoSubmitClicked(this, filteredProjects, e) });
+
+        // // Implement behaviour for the close button in the todo modal
+        // let closeBtn = addTodoModalNode.querySelector("#TodoCloseBtn");
+        // closeBtn.addEventListener("click", handler.addTodoCloseClicked);
+        
+        // sidebarNode.appendChild(addTodoModalNode);
+
+        // // Implement search bar behaviour
+        // let searchInput = sidebarNode.querySelector(".search");
+        // searchInput.value = searchKey;
+
+        // searchInput.addEventListener("focusin", handler.searchBarFocused);
+        // searchInput.addEventListener("focusout", handler.searchBarUnFocused);
+        // searchInput.addEventListener("keyup", e => { handler.searchKeyPressed(this, e) });
+
+        // // Inject projects and todos
+        // for (let p = 0; p < filteredProjects.length; p++) {
+        //     let project = filteredProjects[p];
+    
+        //     let itemContainer = document.createElement("div");
+        //     itemContainer.classList.add("itemContainer");
+    
+        //     // Generate project html
+        //     let projectTemplate = document.createElement("template");
+        //     projectTemplate.innerHTML = template.project(project, p);
+        //     let projectNode = projectTemplate.content.querySelector("div");
+    
+        //     // Make sure correct project is selected
+        //     if (project.uuid === selected) {
+        //         projectNode.classList.add("selected");
+        //     }
+            
+        //     // Add project selection behaviour
+        //     projectNode.addEventListener("click", (e, self=this) => {handler.projectClicked(e, self)});
+
+        //     // Add folder button click event handler
+        //     let folderBtn = projectNode.querySelector(".folder.icon");
+        //     folderBtn.addEventListener("click", e => { handler.folderBtnClicked(this, filteredProjects, e); });
+    
+        //     // Add remove button click event handler
+        //     let removeProjectBtn = projectNode.querySelector(".removeProjectIcon");
+        //     removeProjectBtn.addEventListener("click", e => {
+        //         handler.projectRemoved(e, this);
+        //     });
+        //     itemContainer.appendChild(projectNode);
+    
+        //     // Generate todo html
+        //     for (let t = 0; t < project.todos.length; t++) {
+        //         let todoHtml = template.todo(project.todos[t], t);
+        //         let todoTemplate = document.createElement("template");
+        //         todoTemplate.innerHTML = todoHtml;
+        //         let todoNode = todoTemplate.content.querySelector("div");
+        //         let removeTodoBtn = todoNode.querySelector(".removeProjectIcon");
+        //         removeTodoBtn.addEventListener("click", e => {
+        //             handler.todoRemoved(e, project);
+        //         });
+
+        //         if (project.opened) {
+        //             todoNode.classList.remove("invisible");
+        //         }
+
+        //         itemContainer.appendChild(todoNode);
+        //     }
+
+        //     // Append add todo item to end of todos
+        //     let addTodoItem = document.createElement("template");
+        //     addTodoItem.innerHTML = template.addTodo();
+        //     addTodoItem = addTodoItem.content.querySelector("div");
+            
+        //     if (project.opened) {
+        //         addTodoItem.classList.remove("invisible");
+        //     }
+
+        //     // Implement add todo behaviour
+        //     let plusIcon = addTodoItem.getElementsByClassName("icon")[0];
+        //     plusIcon.addEventListener("click", () => {handler.addTodoBtnClicked(project.uuid)});
+
+        //     itemContainer.appendChild(addTodoItem);
+        //     sidebarNode.appendChild(itemContainer);
+        // }
+
+        // let addProjectTemplate = document.createElement("template");
+        // addProjectTemplate.innerHTML = template.addProject();
+        // let addProjectNode = addProjectTemplate.content.querySelector("div");
+        
+        // let addProjectBtn = addProjectNode.querySelector(".icon");
+        // addProjectBtn.addEventListener("click", e => {handler.addProjectBtnClicked(this, filteredProjects, e)});
+
+        // sidebarNode.appendChild(addProjectNode);
+        // return sidebarNode;
     };
 
     /**
@@ -148,7 +251,45 @@ export const createSidebar = (projects) => {
      */
     function render() {
         let root = document.getElementsByClassName("sidebar")[0];
-        root.replaceWith(this.html());
+
+        // Clear all old project html
+        let oldProjectNodes = Array.from(root.querySelectorAll(".item.project"));
+        oldProjectNodes.forEach(projectNode => {
+            projectNode.parentElement.remove();
+        });
+
+        // Insert new project nodes
+        const projectNodes = this.createProjectNodes();
+
+        // Always insert before the add project container
+        const nodeToInsert = root.querySelector(".addProjectContainer").parentElement;
+        for (let i = 0; i < projectNodes.length; i++) {
+            const node = projectNodes[i];
+            nodeToInsert.insertAdjacentElement('beforebegin', node);
+        }
+
+        // Run once and only once
+        if (initialRender) {
+            // Implement behaviour for the add todo modal submit button
+            let addTodoBtn = root.querySelector("#AddTodoBtn");
+            addTodoBtn.addEventListener("click", e => { handler.addTodoSubmitClicked(this, projects, e) });
+
+            // Implement behaviour for the close button in the todo modal
+            let closeBtn = root.querySelector("#TodoCloseBtn");
+            closeBtn.addEventListener("click", handler.addTodoCloseClicked);
+
+            let searchInput = root.querySelector(".search");
+            searchInput.value = searchKey;
+
+            searchInput.addEventListener("focusin", handler.searchBarFocused);
+            searchInput.addEventListener("focusout", handler.searchBarUnFocused);
+            searchInput.addEventListener("keyup", e => { handler.searchKeyPressed(this, e) });
+
+            let addProjectBtn = root.querySelector(".addProjectContainer .icon");
+            addProjectBtn.addEventListener("click", e => {handler.addProjectBtnClicked(this, projects, e)});
+
+            initialRender = false;
+        }
     };
 
     /**
@@ -162,10 +303,13 @@ export const createSidebar = (projects) => {
     return (() => {
         return {
             projects,
+            searchKey,
+            setSearchKey,
             select,
-            html,
+            createProjectNodes,
             render,
-            currentProject
+            currentProject,
+            filter
         };
     })();
 };

@@ -5,7 +5,6 @@
 import sanitizeHtml from "sanitize-html";
 import { Project, Todo } from "../Todos";
 
-
 /**
  * Event handler for selecting a project
  * @param {?string} uuid The uuid of the selected project
@@ -242,19 +241,34 @@ export function addProjectBtnClicked(sidebar, projects, e) {
     sidebar.render();
 }
 
-export function searchKeyPressed(e) {
-    const key = e.key;
-    const toSearch = e.target.value.toLowerCase();
+export function searchKeyPressed(sidebar, e) {
+    const searchKey = sanitizeHtml(e.target.value);
+    sidebar.setSearchKey(searchKey);
+    sidebar.render();
 
-    // if (toSearch === "") { return; }
+    // let projects = document.querySelectorAll(".sidebar .itemContainer .project");
+    // for (let i = 0; i < projects.length; i++){
+    //     let project = projects[i];
+    //     const projectID = project.dataset.uuid;
+    //     const projectName = project.querySelector(".text").textContent.toLowerCase();
+    //     // projectName.includes(toSearch) ? project.classList.remove("invisible") : project.classList.add("invisible");
 
+    //     // The associated project in the data model
+    //     const assocProject = projectsData.find(project => {
+    //         return project.uuid === projectID;
+    //     });
 
-    let projects = document.querySelectorAll(".sidebar .itemContainer .project");
-    for (let i = 0; i < projects.length; i++){
-        const project = projects[i];
-        const projectName = project.querySelector(".text").textContent.toLowerCase();
-        projectName.includes(toSearch) ? project.classList.remove("invisible") : project.classList.add("invisible")
-    }
+    //     // If this project is open, filter the todos from search as well
+    //     if (assocProject.opened) {
+    //         const projectContainer = project.parentElement;
+    //         const todos = projectContainer.querySelectorAll(".todo");
+    //         for (let t = 0; t < todos.length; t++) {
+    //             let todo = todos[t];
+    //             const todoTitle = todo.querySelector(".text").textContent.toLowerCase();
+    //             todoTitle.includes(toSearch) ? todo.classList.remove("invisible") : todo.classList.add("invisible");
+    //         }
+    //     }
+    // }
 
     // projects = Array.from(projects).filter(project => {
     //     const projectName = project.querySelector(".text").textContent;
