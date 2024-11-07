@@ -61,7 +61,6 @@ export function projectRemoved(e, sidebar) {
         const project = projects[i];
         
         if (project.uuid === UUID) {
-            console.log(project);
             if (!confirm(`Are you sure you want to remove ${project.name}?`)) {
                 return;
             }
@@ -198,8 +197,6 @@ export function addTodoSubmitClicked(sidebar, projects, e) {
             let project = projects[i];
             if (project.uuid === projectId) {
                 project.add(todo);
-                console.log(todo);
-                console.log(todo.dueDate);
                 break;
             }
         }
@@ -226,6 +223,12 @@ export function addTodoCloseClicked(e) {
     dialog.close();
 }
 
+/**
+ * Event handler for adding a new project
+ * @param {Object} sidebar The sidebar component
+ * @param {Project[]} projects The array of projects to be rendered
+ * @param {Event} e The event called when the add project button is clicked
+ */
 export function addProjectBtnClicked(sidebar, projects, e) {
     const addProjectContainer = e.target.parentElement;
     const projectName = addProjectContainer.querySelector(".addProjectTextbox").value;
@@ -237,4 +240,33 @@ export function addProjectBtnClicked(sidebar, projects, e) {
 
     projects.push(new Project(projectName));
     sidebar.render();
+}
+
+export function searchKeyPressed(e) {
+    const key = e.key;
+    const toSearch = e.target.value.toLowerCase();
+
+    // if (toSearch === "") { return; }
+
+
+    let projects = document.querySelectorAll(".sidebar .itemContainer .project");
+    for (let i = 0; i < projects.length; i++){
+        const project = projects[i];
+        const projectName = project.querySelector(".text").textContent.toLowerCase();
+        projectName.includes(toSearch) ? project.classList.remove("invisible") : project.classList.add("invisible")
+    }
+
+    // projects = Array.from(projects).filter(project => {
+    //     const projectName = project.querySelector(".text").textContent;
+    //     console.log(projectName);
+    //     return projectName.includes(toSearch);
+    // });
+
+    // let projectContainers = Array.from(projects).map(project => {
+    //     return project.parentElement;
+    // });
+    // projectContainers.forEach(container => {
+    //     let todos = container.querySelectorAll(".todo");
+    // });
+    // console.log(projectContainers);
 }

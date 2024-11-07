@@ -120,7 +120,7 @@ export const addProject = () => {
     return `
         <div class="itemContainer">
             <div class="item addProjectContainer">
-                <input type="text" class="addProjectTextbox" value="Project Name" />
+                <input type="text" class="addProjectTextbox" placeholder="Project Name" />
                 <img src="${plus}" alt="Plus icon, click to add a new project" class="icon">
             </div>
         </div>

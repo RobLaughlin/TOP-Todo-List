@@ -63,6 +63,7 @@ export const createSidebar = (projects) => {
         let searchInput = sidebarNode.querySelector(".search");
         searchInput.addEventListener("focusin", handler.searchBarFocused);
         searchInput.addEventListener("focusout", handler.searchBarUnFocused);
+        searchInput.addEventListener("keyup", handler.searchKeyPressed);
 
         // Inject projects and todos
         for (let p = 0; p < projects.length; p++) {

@@ -12,7 +12,6 @@ let sidebarNode = createSidebar(projects);
 sidebarNode.render();
 
 projects[0].addChangeListener(project => {
-    console.log(project.todos);
     // sidebarNode = createSidebar(projects);
     sidebarNode.render();
 });
