@@ -143,18 +143,38 @@
     opacity: 0.8;
 }
 
-/* Add todo item */
-.sidebar .item.addTodoContainer:hover {
+/* Add todo and project items */
+.sidebar .item.addTodoContainer:hover,
+.sidebar .item.addProjectContainer:hover {
     box-shadow: none;
 }
 
-.sidebar .item.addTodoContainer .text {
+.sidebar .item.addTodoContainer .text,
+.sidebar .item.addProjectContainer .text {
     opacity: 0.2;
     font-size: 18px;
     margin-left: 0;
 }
 
-.sidebar .item.addTodoContainer .icon {
+.sidebar .item.addProjectContainer .addProjectTextbox {
+    font-size: 24px;
+    width: 220px;
+    background-color: rgba(0, 0, 0, 0);
+    border: 0;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.75);
+    opacity: 0.5;
+    padding: 8px 8px 8px 0;
+    font-family: 'Roboto', 'Times New Roman', Times, serif;
+    opacity: 0.4;
+}
+
+.sidebar .item.addProjectContainer .addProjectTextbox:focus {
+    outline: none;
+}
+
+.sidebar .item.addTodoContainer .icon,
+.sidebar .item.addProjectContainer .icon
+ {
     margin-left: auto;
     margin-right: 8px;
     opacity: 0.3;
@@ -163,7 +183,8 @@
     height: 32px;
 }
 
-.sidebar .item.addTodoContainer .icon:hover {
+.sidebar .item.addTodoContainer .icon:hover,
+.sidebar .item.addProjectContainer .icon:hover {
     opacity: 0.6;
 }
 

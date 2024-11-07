@@ -130,6 +130,14 @@ export const createSidebar = (projects) => {
             sidebarNode.appendChild(itemContainer);
         }
 
+        let addProjectTemplate = document.createElement("template");
+        addProjectTemplate.innerHTML = template.addProject();
+        let addProjectNode = addProjectTemplate.content.querySelector("div");
+        
+        let addProjectBtn = addProjectNode.querySelector(".icon");
+        addProjectBtn.addEventListener("click", e => {handler.addProjectBtnClicked(this, projects, e)});
+
+        sidebarNode.appendChild(addProjectNode);
         return sidebarNode;
     };
 

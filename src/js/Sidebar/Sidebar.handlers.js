@@ -3,7 +3,7 @@
  */
 
 import sanitizeHtml from "sanitize-html";
-import { Todo } from "../Todos";
+import { Project, Todo } from "../Todos";
 
 
 /**
@@ -224,4 +224,17 @@ export function addTodoCloseClicked(e) {
     dialog.parentElement.classList.toggle("invisible");
     delete dialog.dataset["project_uuid"];
     dialog.close();
+}
+
+export function addProjectBtnClicked(sidebar, projects, e) {
+    const addProjectContainer = e.target.parentElement;
+    const projectName = addProjectContainer.querySelector(".addProjectTextbox").value;
+
+    if (projectName === "" || projectName === undefined || projectName === null) {
+        alert("Project name must be non-empty.");
+        return;
+    }
+
+    projects.push(new Project(projectName));
+    sidebar.render();
 }
