@@ -241,6 +241,22 @@ export function addProjectBtnClicked(sidebar, projects, e) {
     sidebar.render();
 }
 
+/**
+ * Event handler for editing the proejct button
+ * @param {string} projectUUID The UUID of the corresponding project to edit
+ */
+export function editProjectBtnClicked(projectUUID) {
+    let dialog = document.getElementsByClassName("editProjectModal")[0];
+    dialog.show();
+
+    // Make backdrop visible
+    let backdrop = dialog.parentElement;
+    backdrop.classList.remove("invisible");
+
+    // Give the dialog the project UUID until form/dialog is submitted/closed.
+    dialog.dataset['project_uuid'] = projectUUID;
+}
+
 export function searchKeyPressed(sidebar, e) {
     const searchKey = sanitizeHtml(e.target.value);
     sidebar.setSearchKey(searchKey);

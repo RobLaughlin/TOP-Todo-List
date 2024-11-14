@@ -17,6 +17,19 @@
                     <input type="search" placeholder="Search" class="search">
                 </div>
             </div>
+            <div class="editProjectModalContainer invisible">
+                <dialog class="editProjectModal">
+                    <form method="dialog" id="EditProjectForm" autocomplete="off">
+                        <div class="formRow" id="ProjectTitleTextboxContainer">
+                            <input type="text" id="ProjectTitleTextbox" name="ProjectTitle" placeholder="Project Title" required/>
+                        </div>
+                        <div class="formRow" id="EditProjectButtonContainer">
+                            <button id="EditProjectSaveBtn" name="EditProjectSave">Save</button>
+                            <button id="EditProjectCloseBtn" name="CloseProjectSave">Close</button>
+                        </div> 
+                    </form>
+                </dialog>
+            </div>
             <div class="addTodoModalContainer invisible">
                 <dialog class="addTodoModal">
                     <form method="dialog" id="AddTodoForm" autocomplete="off">

@@ -53,7 +53,6 @@ export const createSidebar = (projects) => {
             const filteredTodos = project.todos.filter(todo => {
                 return todo.title.toLowerCase().includes(key);
             });
-            console.log(filteredTodos);
 
             // If neither the project name nor any of the todos in the project match the search, hide the project entirely
             const projectMatch = project.name.toLowerCase().includes(key);
@@ -100,7 +99,10 @@ export const createSidebar = (projects) => {
             // Add folder button click event handler
             let folderBtn = projectNode.querySelector(".folder.icon");
             folderBtn.addEventListener("click", e => { handler.folderBtnClicked(this, projects, e); });
-    
+            
+            let editProjectBtn = projectNode.querySelector(".editProjectIcon.icon");
+            editProjectBtn.addEventListener("click", () => { handler.editProjectBtnClicked(project.uuid) });
+
             // Add remove button click event handler
             let removeProjectBtn = projectNode.querySelector(".removeProjectIcon");
             removeProjectBtn.addEventListener("click", e => {

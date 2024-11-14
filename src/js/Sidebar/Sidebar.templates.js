@@ -3,6 +3,7 @@ import minusBox from "../../icons/minus-box.svg";
 import note from "../../icons/note.svg";
 import magnify from "../../icons/magnify.svg";
 import plus from "../../icons/plus.svg";
+import pencil from "../../icons/pencil.svg";
 
 import sanitizeHtml from "sanitize-html";
 
@@ -40,6 +41,7 @@ export const project = project => {
         <div class="item project" data-uuid=${sanitizeHtml(project.uuid)}>
             <img src="${folder}" alt="Folder icon" class="folder icon">
             <span class="text">${sanitizeHtml(project.name)}</span>
+            <img src="${pencil}" alt="Edit icon, click to edit this project" class="icon editProjectIcon">
             <img src="${minusBox}" alt="Minus box icon, click to remove project" class="icon removeProjectIcon">
         </div>
     `;
