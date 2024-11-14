@@ -84,6 +84,8 @@
 .sidebar .item > .text {
     margin-left: 16px;
     opacity: 0.8;
+    overflow-x: hidden;
+    margin-right: 16px;
 }
 
 .sidebar .item > .text.selected {
@@ -353,6 +355,7 @@
     width: 100%;
     color: black;
 }
+
 .sidebar .editProjectModal button {
     width: 45%;
     border-radius: 4px;

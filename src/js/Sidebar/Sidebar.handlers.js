@@ -257,46 +257,45 @@ export function editProjectBtnClicked(projectUUID) {
     dialog.dataset['project_uuid'] = projectUUID;
 }
 
+/**
+ * Event handler for clicking the close button on the edit project modal
+ * @param {Event} e  
+ */
+export function editProjectCloseBtnClicked(e) {
+    e.preventDefault();
+    let dialog = document.getElementsByClassName("editProjectModal")[0];
+    console.log(dialog);
+    dialog.parentElement.classList.toggle("invisible");
+    delete dialog.dataset["project_uuid"];
+    dialog.close();
+}
+
+/**
+ * Event handler for clicking the save button on the edit project modal
+ * @param {Project[]} projects The array of projects contained in the sidebar 
+ */
+export function editProjectSaveBtnClicked(e, projects) {
+    e.preventDefault();
+
+    let dialog = document.getElementsByClassName("editProjectModal")[0];
+    const projectUUID = dialog.dataset['project_uuid'];
+    const title = dialog.querySelector("#ProjectTitleTextbox").value;
+
+    for (let i = 0; i < projects.length; i++) {
+        let project = projects[i];
+        if (project.uuid === projectUUID) {
+            project.name = sanitizeHtml(title);
+            break;
+        }
+    }
+
+    dialog.parentElement.classList.toggle("invisible");
+    delete dialog.dataset["project_uuid"];
+    dialog.close();
+}
+
 export function searchKeyPressed(sidebar, e) {
     const searchKey = sanitizeHtml(e.target.value);
     sidebar.setSearchKey(searchKey);
     sidebar.render();
-
-    // let projects = document.querySelectorAll(".sidebar .itemContainer .project");
-    // for (let i = 0; i < projects.length; i++){
-    //     let project = projects[i];
-    //     const projectID = project.dataset.uuid;
-    //     const projectName = project.querySelector(".text").textContent.toLowerCase();
-    //     // projectName.includes(toSearch) ? project.classList.remove("invisible") : project.classList.add("invisible");
-
-    //     // The associated project in the data model
-    //     const assocProject = projectsData.find(project => {
-    //         return project.uuid === projectID;
-    //     });
-
-    //     // If this project is open, filter the todos from search as well
-    //     if (assocProject.opened) {
-    //         const projectContainer = project.parentElement;
-    //         const todos = projectContainer.querySelectorAll(".todo");
-    //         for (let t = 0; t < todos.length; t++) {
-    //             let todo = todos[t];
-    //             const todoTitle = todo.querySelector(".text").textContent.toLowerCase();
-    //             todoTitle.includes(toSearch) ? todo.classList.remove("invisible") : todo.classList.add("invisible");
-    //         }
-    //     }
-    // }
-
-    // projects = Array.from(projects).filter(project => {
-    //     const projectName = project.querySelector(".text").textContent;
-    //     console.log(projectName);
-    //     return projectName.includes(toSearch);
-    // });
-
-    // let projectContainers = Array.from(projects).map(project => {
-    //     return project.parentElement;
-    // });
-    // projectContainers.forEach(container => {
-    //     let todos = container.querySelectorAll(".todo");
-    // });
-    // console.log(projectContainers);
 }

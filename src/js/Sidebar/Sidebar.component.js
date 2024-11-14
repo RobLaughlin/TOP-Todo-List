@@ -182,6 +182,13 @@ export const createSidebar = (projects) => {
             let closeBtn = root.querySelector("#TodoCloseBtn");
             closeBtn.addEventListener("click", handler.addTodoCloseClicked);
 
+            let editProjectSaveBtn = root.querySelector("#EditProjectSaveBtn");
+            editProjectSaveBtn.addEventListener("click", e => {handler.editProjectSaveBtnClicked(e, projects)});
+            // let editProjectCloseBtn = root.querySelector("EditProjectCloseBtn");
+
+            let editProjectCloseBtn = root.querySelector("#EditProjectCloseBtn");
+            editProjectCloseBtn.addEventListener("click", handler.editProjectCloseBtnClicked);
+
             let searchInput = root.querySelector(".search");
             searchInput.value = searchKey;
 

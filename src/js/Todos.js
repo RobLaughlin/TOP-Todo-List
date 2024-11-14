@@ -114,6 +114,10 @@ export class Project extends ChangeListener {
     get opened() { return this.#opened; }
 
     get name() { return this.#name; }
+    set name(name) {
+        this.#name = name;
+        this.changed();
+    }
     
     get todos() { return [...this.#todos]}
 
