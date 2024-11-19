@@ -18,7 +18,6 @@ sidebarNode.render();
 for (let i = 0; i < projects.length; i++) {
     let project = projects[i];
     project.addChangeListener(_ => {
-        console.log("changed");
         sidebarNode.render();
     });
 }

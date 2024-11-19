@@ -264,7 +264,7 @@ export function editProjectBtnClicked(projectUUID) {
 export function editProjectCloseBtnClicked(e) {
     e.preventDefault();
     let dialog = document.getElementsByClassName("editProjectModal")[0];
-    console.log(dialog);
+
     dialog.parentElement.classList.toggle("invisible");
     delete dialog.dataset["project_uuid"];
     dialog.close();
@@ -281,6 +281,14 @@ export function editProjectSaveBtnClicked(e, projects) {
     const projectUUID = dialog.dataset['project_uuid'];
     const title = dialog.querySelector("#ProjectTitleTextbox").value;
 
+    let form = dialog.querySelector("form");
+    console.log(form);
+    form.reportValidity();
+
+    if (!form.checkValidity()) {
+        return;
+    }
+    
     for (let i = 0; i < projects.length; i++) {
         let project = projects[i];
         if (project.uuid === projectUUID) {
