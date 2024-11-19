@@ -101,7 +101,7 @@ export const createSidebar = (projects) => {
             folderBtn.addEventListener("click", e => { handler.folderBtnClicked(this, projects, e); });
             
             let editProjectBtn = projectNode.querySelector(".editProjectIcon.icon");
-            editProjectBtn.addEventListener("click", () => { handler.editProjectBtnClicked(project.uuid) });
+            editProjectBtn.addEventListener("click", () => { handler.editProjectBtnClicked(project.name, project.uuid) });
 
             // Add remove button click event handler
             let removeProjectBtn = projectNode.querySelector(".removeProjectIcon");

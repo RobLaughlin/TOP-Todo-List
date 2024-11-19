@@ -245,7 +245,7 @@ export function addProjectBtnClicked(sidebar, projects, e) {
  * Event handler for editing the proejct button
  * @param {string} projectUUID The UUID of the corresponding project to edit
  */
-export function editProjectBtnClicked(projectUUID) {
+export function editProjectBtnClicked(projectName, projectUUID) {
     let dialog = document.getElementsByClassName("editProjectModal")[0];
     dialog.show();
 
@@ -255,6 +255,9 @@ export function editProjectBtnClicked(projectUUID) {
 
     // Give the dialog the project UUID until form/dialog is submitted/closed.
     dialog.dataset['project_uuid'] = projectUUID;
+
+    let projectTitleTxtbox = dialog.querySelector("#ProjectTitleTextbox");
+    projectTitleTxtbox.value = projectName;
 }
 
 /**
@@ -282,13 +285,12 @@ export function editProjectSaveBtnClicked(e, projects) {
     const title = dialog.querySelector("#ProjectTitleTextbox").value;
 
     let form = dialog.querySelector("form");
-    console.log(form);
     form.reportValidity();
 
     if (!form.checkValidity()) {
         return;
     }
-    
+
     for (let i = 0; i < projects.length; i++) {
         let project = projects[i];
         if (project.uuid === projectUUID) {
