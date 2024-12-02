@@ -3,6 +3,11 @@
     src: url("../fonts/Roboto-Medium.ttf");
 }
 
+@font-face {
+    font-family: 'SchoolBell';
+    src: url("../fonts/Schoolbell-Regular.ttf");
+}
+
 * {
     box-sizing: border-box;
     margin: 0;

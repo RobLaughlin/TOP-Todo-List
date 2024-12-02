@@ -5,6 +5,7 @@
     padding: 40px;
     justify-items: center;
     align-items: center;
+    font-family: 'Roboto', 'Times New Roman', Times, serif;
 }
 
 .note {
@@ -20,4 +21,50 @@
     height: 50px;
     background-color: #f8e795;
     border-radius: 4px;
+    display: flex;
+}
+
+.note .title .text {
+    color: rgb(0, 51, 133);
+    font-size: 28px;
+    margin: auto;
+}
+
+.note .body .text {
+    color: rgb(0, 51, 133);
+    font-size: 16px;
+}
+
+.note .body .textContainer {
+    padding: 20px;
+}
+
+.note .body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 40px 1fr;
+}
+
+.note .body .date {
+    text-align: right;
+}
+
+.note .body .date .text,
+.note .body .priority .text {
+    color: rgb(0, 51, 133);
+}
+
+.note .body .description {
+    grid-column: span 2;
+}
+
+.note .body .description .text,
+.note .body .notes .text
+{
+    font-family: 'SchoolBell', 'Roboto', 'Times New Roman', Times, serif;
+    font-size: 20px;
+}
+
+.note .body .notes {
+    grid-column: span 2;
 }
