@@ -57,6 +57,7 @@ export const todo = todo => {
         <div class="item todo invisible" data-uuid=${sanitizeHtml(todo.uuid)}>
             <img src="${note}" alt="Note icon for to-do" class="icon">
             <span class="text">${sanitizeHtml(todo.title)}</span>
+            <img src="${pencil}" alt="Edit icon, click to edit this todo" class="icon editTodoIcon">
             <img src="${minusBox}" alt="Minus box icon, click to remove to-do under selected project" class="icon removeProjectIcon">
         </div>
     `;

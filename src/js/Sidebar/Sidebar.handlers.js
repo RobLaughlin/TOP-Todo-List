@@ -243,6 +243,7 @@ export function addProjectBtnClicked(sidebar, projects, e) {
 
 /**
  * Event handler for editing the proejct button
+ * @param {string} projectName The current name of the corresponding project
  * @param {string} projectUUID The UUID of the corresponding project to edit
  */
 export function editProjectBtnClicked(projectName, projectUUID) {
@@ -257,7 +258,7 @@ export function editProjectBtnClicked(projectName, projectUUID) {
     dialog.dataset['project_uuid'] = projectUUID;
 
     let projectTitleTxtbox = dialog.querySelector("#ProjectTitleTextbox");
-    projectTitleTxtbox.value = projectName;
+    projectTitleTxtbox.value = sanitizeHtml(projectName);
 }
 
 /**
@@ -304,8 +305,29 @@ export function editProjectSaveBtnClicked(e, projects) {
     dialog.close();
 }
 
+/**
+ * Event handler for key presses on the search bar
+ * @param {Object} sidebar The sidebar component 
+ * @param {Event} e The event called when a key on the search bar is pressed 
+ */
 export function searchKeyPressed(sidebar, e) {
     const searchKey = sanitizeHtml(e.target.value);
     sidebar.setSearchKey(searchKey);
     sidebar.render();
+}
+
+export function editTodoBtnClicked(todo, projectUUID) {
+    addTodoBtnClicked(projectUUID);
+    let form = document.querySelector("#AddTodoForm");
+    let titleInput = form.querySelector("#TodoTitle");
+    let dueDateInput = form.querySelector("#TodoDate");
+    let priorityInput = form.querySelector("#TodoPriority");
+    let descriptionInput = form.querySelector("#TodoDescription");
+    let notesInput = form.querySelector("#TodoNotes");
+
+    titleInput.value = todo.title;
+    dueDateInput.value = todo.dueDate;
+    priorityInput.value = todo.priority;
+    descriptionInput.value = todo.description;
+    notesInput.value = todo.notes;
 }

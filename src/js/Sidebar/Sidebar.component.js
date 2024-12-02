@@ -111,11 +111,17 @@ export const createSidebar = (projects) => {
             itemContainer.appendChild(projectNode);
     
             // Generate todo html
-            for (let t = 0; t < project.todos.length; t++) {
+            for (let t = 0; t < project.size(); t++) {
                 let todoHtml = template.todo(project.todos[t], t);
                 let todoTemplate = document.createElement("template");
                 todoTemplate.innerHTML = todoHtml;
                 let todoNode = todoTemplate.content.querySelector("div");
+
+                let editTodoBtn = todoNode.querySelector(".editTodoIcon");
+                editTodoBtn.addEventListener("click", () => {
+                    handler.editTodoBtnClicked(project.todos[t], project.uuid);
+                });
+
                 let removeTodoBtn = todoNode.querySelector(".removeProjectIcon");
                 removeTodoBtn.addEventListener("click", e => {
                     handler.todoRemoved(e, project);

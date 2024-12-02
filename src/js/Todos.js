@@ -108,7 +108,7 @@ export class Project extends ChangeListener {
     constructor(name, todos=[]) {
         super();
         this.#name = name;
-        this.#todos = [...todos];
+        this.#todos = todos;
     }
 
     get opened() { return this.#opened; }
@@ -119,7 +119,7 @@ export class Project extends ChangeListener {
         this.changed();
     }
     
-    get todos() { return [...this.#todos]}
+    get todos() { return this.#todos }
 
     /**
      * The number of todos in the project
