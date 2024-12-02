@@ -1,0 +1,23 @@
+.noteContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 40px;
+    padding: 40px;
+    justify-items: center;
+    align-items: center;
+}
+
+.note {
+    width: 100%;
+    min-width: 300px;
+    aspect-ratio: 1 / 1;
+    background-color: #f3de71;
+    box-shadow: 0px 0px 4px 3px rgba(12, 124, 169, 0.553);
+    border-radius: 4px;
+}
+
+.note .title {
+    height: 50px;
+    background-color: #f8e795;
+    border-radius: 4px;
+}

@@ -1,5 +1,6 @@
 import "./../css/sidebar.css";
 import "./../css/todos.css";
+import "./../css/note.css";
 import "./../css/index.css";
 
 import { createSidebar } from "./Sidebar/Sidebar.component";
