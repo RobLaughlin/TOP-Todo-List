@@ -26,19 +26,51 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import PubSub from "./PubSub";
-import { v4 as uuidv4 } from 'uuid';
+            <pre class="prettyprint source linenums"><code>import { v4 as uuidv4 } from 'uuid';
 
-export class Todo {
+class ChangeListener {
+    _toChange = new Map();
+
+    /**
+     * Adds a callback function to be called when data is changed
+     * @param {Function(Todo)} callback The callback function to be called when data is changed
+     * @returns {string} The ID of the callback function
+     */
+    addChangeListener(callback) {
+        const callbackId = uuidv4();
+        this._toChange.set(callbackId, callback);
+        return callbackId;
+    }
+
+    /**
+     * Removes a callback function via the associated callback function ID if it exists
+     * @param {string} callbackId The ID of the callback function 
+     * @returns {?string} The ID of the callback function if such an ID exists. Returns null if the callback ID is not found
+     */
+    removeChangeListener(callbackId) {
+        if (!(this._toChange.has(callbackId))) {
+            return null;
+        }
+
+        this._toChange.delete(callbackId);
+        return callbackId;
+    }
+
+    changed() {
+        this._toChange.values().forEach(callback => {
+            callback(this);
+        });
+    }
+};
+
+export class Todo extends ChangeListener {
     #title;
     #description;
     #dueDate;
     #priority;
     #notes;
     #uuid = uuidv4();
-
-    onChange = null;
-
+    
     /**
      * Creates a Todo
      * 
@@ -47,75 +79,77 @@ export class Todo {
      * @param {Date} dueDate The due date of the Todo
      * @param {number} priority The priority of the Todo (an integer, lower is higher priority)
      * @param {string} [notes=""] Optional notes to include with the Todo
-     * @param {?string} [onChange=null] The event to publish when a todo is changed.
-     * If onChange is null, then no event will be published. 
-     * Otherwise, publish using the current Todo object as data.
      */
-    constructor(title, description, dueDate, priority, notes="", onChange=null) {
+    constructor(title, description, dueDate, priority, notes="") {
+        super();
         this.#title = title;
         this.#description = description;
         this.#dueDate = dueDate;
         this.#priority = priority;
         this.#notes = notes;
-        this.onChange = onChange;
     }
 
     get title() { return this.#title; }
     set title(value) {
         this.#title = value;
-        if (this.onChange !== null) { PubSub.publish(this.onChange, this) };
+        this.changed();
     }
 
     get description() { return this.#description; }
     set description(value) {
         this.#description = value;
-        if (this.onChange !== null) { PubSub.publish(this.onChange, this) };
+        this.changed();
     }
 
     get dueDate() { return this.#dueDate; }
     set dueDate(value) {
         this.#dueDate = value;
-        if (this.onChange !== null) { PubSub.publish(this.onChange, this) };
+        this.changed();
     }
 
     get priority() { return this.#priority; }
     set priority(value) {
         this.#priority = value;
-        if (this.onChange !== null) { PubSub.publish(this.onChange, this) };
+        this.changed();
     }
 
     get notes() { return this.#notes; }
     set notes(value) {
         this.#notes = value;
-        if (this.onChange !== null) { PubSub.publish(this.onChange, this) };
+        this.changed();
     }
-
+    
     get uuid() { return this.#uuid; }
 }
 
-export class Project {
+export class Project extends ChangeListener {
+    #opened = false
     #name = ""
     #todos = []
-    onChange = null
-    #uuid = uuidv4();
+    uuid = uuidv4()
 
     /**
      * A container for an array of Todos, with a given name
      * @param {string} name The name of the project
      * @param {Todo[]} [todos=[]] The array of todos
-     * @param {?string} [onChange=null] The event to be broadcast when a todo is changed
      */
-    constructor(name, todos=[], onChange=null) {
+    constructor(name, todos=[]) {
+        super();
         this.#name = name;
-        this.#todos = [...todos];
-        this.onChange = onChange;
+        todos.forEach(todo => {
+            this.add(todo);
+        });
     }
 
+    get opened() { return this.#opened; }
+
     get name() { return this.#name; }
-
-    get todos() { return [...this.#todos]}
-
-    get uuid() { return this.#uuid; }
+    set name(name) {
+        this.#name = name;
+        this.changed();
+    }
+    
+    get todos() { return this.#todos }
 
     /**
      * The number of todos in the project
@@ -131,7 +165,11 @@ export class Project {
      */
     add(todo) {
         this.#todos.push(todo);
-        if (this.onChange !== null) { PubSub.publish(this.onChange, this); }
+        this.#todos[this.size()-1].addChangeListener(todo => {
+            console.log(this);
+            this.changed();
+        });
+        this.changed();
     }
 
     /**
@@ -143,7 +181,7 @@ export class Project {
             throw new RangeError("Index of todo out of range.");
         }
         this.#todos.splice(idx, 1);
-        if (this.onChange !== null) { PubSub.publish(this.onChange, this); }
+        this.changed();
     }
 
     /**
@@ -156,6 +194,22 @@ export class Project {
         }
         return this.#todos[idx];
     }
+
+    /**
+     * Opens the project
+     */
+    open() { 
+        this.#opened = true; 
+        this.changed();
+    }
+
+    /**
+     * Closes the project
+     */
+    close() {
+        this.#opened = false;
+        this.changed();
+    }
 } </code></pre>
         </article>
     </section>
@@ -166,13 +220,13 @@ export class Project {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Sidebar.html">Sidebar</a></li><li><a href="module-Sidebar_EventHandler.html">Sidebar/EventHandler</a></li><li><a href="module-Sidebar_Template.html">Sidebar/Template</a></li><li><a href="module-Sidebar_Test.html">Sidebar/Test</a></li></ul><h3>Classes</h3><ul><li><a href="Project_Project.html">Project</a></li><li><a href="Todo_Todo.html">Todo</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Sidebar_EventHandler.html">Sidebar/EventHandler</a></li><li><a href="module-Sidebar_Template.html">Sidebar/Template</a></li><li><a href="module-Sidebar_Test.html">Sidebar/Test</a></li></ul><h3>Classes</h3><ul><li><a href="Project_Project.html">Project</a></li><li><a href="Todo_Todo.html">Todo</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createSidebar">createSidebar</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#select">select</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Mon Oct 21 2024 12:19:34 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Thu Dec 05 2024 13:20:55 GMT-0800 (Pacific Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

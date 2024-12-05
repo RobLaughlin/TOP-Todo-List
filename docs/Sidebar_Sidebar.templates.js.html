@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Sidebar/Sidebar.templates.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Sidebar/Sidebar.templates.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import folder from "../../icons/folder.svg";
+import minusBox from "../../icons/minus-box.svg";
+import note from "../../icons/note.svg";
+import magnify from "../../icons/magnify.svg";
+import plus from "../../icons/plus.svg";
+import pencil from "../../icons/pencil.svg";
+
+import sanitizeHtml from "sanitize-html";
+
+/**
+ * @module Sidebar/Template
+ */
+
+/**
+ * The sidebar template
+ * @returns Template to generate the sidebar component HTML
+ */
+export const sidebar = () => {
+    return `
+        &lt;div class="sidebar">
+            &lt;div class="titleContainer">
+                &lt;h1 class="title">Projects&lt;/h1>
+            &lt;/div>
+            &lt;div class="searchContainer">
+                &lt;div class="searchBar">
+                    &lt;img src="${magnify}" alt="Magnifying glass icon" class="icon">
+                    &lt;input type="search" placeholder="Search" class="search">
+                &lt;/div>
+            &lt;/div>
+        &lt;/div>
+    `;
+}
+
+/**
+ * The project template
+ * @param {Project} project
+ * @returns Sanitized Project HTML to inject into sidebar
+ */
+export const project = project => {
+    return `
+        &lt;div class="item project" data-uuid=${sanitizeHtml(project.uuid)}>
+            &lt;img src="${folder}" alt="Folder icon" class="folder icon">
+            &lt;span class="text">${sanitizeHtml(project.name)}&lt;/span>
+            &lt;img src="${pencil}" alt="Edit icon, click to edit this project" class="icon editProjectIcon">
+            &lt;img src="${minusBox}" alt="Minus box icon, click to remove project" class="icon removeProjectIcon">
+        &lt;/div>
+    `;
+}
+
+/**
+ * The todo template
+ * @param {Todo} todo
+ * @returns Sanitized Todo HTML to inject into sidebar
+ */
+export const todo = todo => {
+    return `
+        &lt;div class="item todo invisible" data-uuid=${sanitizeHtml(todo.uuid)}>
+            &lt;img src="${note}" alt="Note icon for to-do" class="icon">
+            &lt;span class="text">${sanitizeHtml(todo.title)}&lt;/span>
+            &lt;img src="${pencil}" alt="Edit icon, click to edit this todo" class="icon editTodoIcon">
+            &lt;img src="${minusBox}" alt="Minus box icon, click to remove to-do under selected project" class="icon removeProjectIcon">
+        &lt;/div>
+    `;
+}
+
+/**
+ * The template for adding todos
+ * @returns The add todo item HTML
+ */
+export const addTodo = () => {
+    return `
+        &lt;div class="item addTodoContainer todo invisible">
+            &lt;span class="text">Add Todo&lt;/span>
+            &lt;img src="${plus}" alt="Plus icon, click to add a new to-do" class="icon">
+        &lt;/div>
+    `;
+}
+
+/**
+ * Add todo modal template
+ * @returns The add todo modal HTML
+ */
+export const addTodoModal  = () => {
+    return `
+        &lt;div class="addTodoModalContainer invisible">
+            &lt;dialog class="addTodoModal">
+                &lt;form method="dialog" id="AddTodoForm" autocomplete="off">
+                    &lt;div class="formRow" id="TodoTitleContainer">
+                        &lt;label for="TodoTitle" class="required-field">Title:&lt;/label>
+                        &lt;input type="text" id="TodoTitle" name="TodoTitle" placeholder="Todo Title" required/>
+                    &lt;/div>
+                    &lt;div class="formRow" id="TodoDateContainer">
+                        &lt;label for="TodoDate" class="required-field">Due Date:&lt;/label>
+                        &lt;input type="date" id="TodoDate" name="TodoDate" required/>
+                    &lt;/div>
+                    &lt;div class="formRow" id="TodoPriorityContainer">
+                        &lt;label for="TodoPriority" class="required-field">Priority:&lt;/label>
+                        &lt;input type="number" id="TodoPriority" name="TodoPriority" required value="0"/>
+                    &lt;/div>
+                    &lt;div class="formRow" id="TodoDescriptionContainer">
+                        &lt;textarea id="TodoDescription" name="TodoDescription" placeholder="Description of todo goes here">&lt;/textarea>
+                    &lt;/div>
+                    &lt;div class="formRow" id="TodoNotesContainer">
+                        &lt;textarea id="TodoNotes" name="TodoNotes" placeholder="Todo notes goes here">&lt;/textarea>
+                    &lt;/div>
+                    &lt;div class="formRow" id="AddTodoBtnContainer">
+                        &lt;button id="AddTodoBtn" name="AddTodoBtn" onSubmit="return confirm('U sure?')">Add Todo&lt;/button>
+                    &lt;/div>
+                    &lt;div class="formRow" id="TodoCloseBtnContainer">
+                        &lt;button id="TodoCloseBtn" name="TodoCloseBtn" formnovalidate>Close&lt;/button>
+                    &lt;/div>
+                &lt;/form>  
+            &lt;/dialog>
+        &lt;/div>
+    `
+}
+
+/**
+ * The template for adding projects
+ * @returns The add project item HTML
+ */
+export const addProject = () => {
+    return `
+        &lt;div class="itemContainer">
+            &lt;div class="item addProjectContainer">
+                &lt;input type="text" class="addProjectTextbox" placeholder="Project Name" />
+                &lt;img src="${plus}" alt="Plus icon, click to add a new project" class="icon">
+            &lt;/div>
+        &lt;/div>
+    `;
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Sidebar_EventHandler.html">Sidebar/EventHandler</a></li><li><a href="module-Sidebar_Template.html">Sidebar/Template</a></li><li><a href="module-Sidebar_Test.html">Sidebar/Test</a></li></ul><h3>Classes</h3><ul><li><a href="Project_Project.html">Project</a></li><li><a href="Todo_Todo.html">Todo</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createSidebar">createSidebar</a></li><li><a href="global.html#render">render</a></li><li><a href="global.html#select">select</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Thu Dec 05 2024 13:20:55 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

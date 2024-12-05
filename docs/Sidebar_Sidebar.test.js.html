@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: Sidebar/Sidebar.test.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,42 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: Sidebar/Sidebar.test.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Project, Todo } from "../Todos";
 
+/**
+ * @module Sidebar/Test
+ */
 
-    <h3> </h3>
+/**
+ * Generates a number of projects and todos to use as test data
+ * @param {number} numProjects The number of projects to generate 
+ * @param {number} numTodos The number of todos to generate within each project
+ * @returns {Project[]} The array of test projects generated
+ */
+export const createTestProjects = (numProjects, numTodos) => {
+    let projects = []
+    for (let i = 0; i &lt; numProjects; i++) {
+        let project = new Project(`Project ${i}`, []);
+        for (let j = 0; j &lt; numTodos; j++) {
+            project.add(new Todo(`Project ${i} - Todo ${j}`, "description - Deserunt mollit ea nostrud minim aliquip ex laboris labore labore.", new Date(), j, "notes - Laboris aute velit ipsum exercitation sint dolor ad."));
+        }
+        projects.push(project);
+    }
 
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+    const selected = numProjects >= 1 ? projects[0].uuid : null;
+    return { projects, selected };
+};</code></pre>
+        </article>
+    </section>
 
 
 
