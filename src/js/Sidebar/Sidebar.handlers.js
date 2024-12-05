@@ -4,10 +4,13 @@
 
 import sanitizeHtml from "sanitize-html";
 import { Project, Todo } from "../Todos";
+import { note } from "../Note/Note.templates";
+import PubSub from "../PubSub";
 
 /**
  * Event handler for selecting a project
  * @param {?string} uuid The uuid of the selected project
+ * @param {Project[]} projects The array of projects to run through and find the list of todos to update
  */
 export function projectSelected(uuid) {
     // Remove current selection if it exists
@@ -18,8 +21,9 @@ export function projectSelected(uuid) {
     
     // Enable new selection
     if (uuid !== null) {
-        let selectedProject = document.querySelector(`.sidebar .item.project[data-uuid="${uuid}"]`)
+        let selectedProject = document.querySelector(`.sidebar .item.project[data-uuid="${uuid}"]`);
         selectedProject.classList.add("selected");
+        PubSub.publish("projectSelected", uuid);
     }
 }
 
@@ -42,7 +46,7 @@ export function projectClicked(e, sidebar) {
     }
     
     let selectedUUID = target.dataset.uuid;
-    sidebar.select(selectedUUID, projectSelected);
+    sidebar.select(selectedUUID, () => {projectSelected(selectedUUID)});
 }
 
 /**

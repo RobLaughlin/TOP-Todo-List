@@ -15,7 +15,7 @@ export const createTestProjects = (numProjects, numTodos) => {
     for (let i = 0; i < numProjects; i++) {
         let project = new Project(`Project ${i}`, []);
         for (let j = 0; j < numTodos; j++) {
-            project.add(new Todo(`Todo ${j}`, "description", new Date(), j, "notes"));
+            project.add(new Todo(`Project ${i} - Todo ${j}`, "description - Deserunt mollit ea nostrud minim aliquip ex laboris labore labore.", new Date(), j, "notes - Laboris aute velit ipsum exercitation sint dolor ad."));
         }
         projects.push(project);
     }
