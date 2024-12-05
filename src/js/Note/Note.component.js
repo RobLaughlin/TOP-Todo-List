@@ -13,7 +13,6 @@ export const createNoteContainer = () => {
             let noteNode = noteTemplate.content.querySelector("div");
             root.appendChild(noteNode);
         });
-        // root.appendChild(note);
     }
 
     let component = (function() {

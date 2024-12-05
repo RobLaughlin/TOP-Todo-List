@@ -108,7 +108,9 @@ export class Project extends ChangeListener {
     constructor(name, todos=[]) {
         super();
         this.#name = name;
-        this.#todos = todos;
+        todos.forEach(todo => {
+            this.add(todo);
+        });
     }
 
     get opened() { return this.#opened; }
@@ -135,6 +137,10 @@ export class Project extends ChangeListener {
      */
     add(todo) {
         this.#todos.push(todo);
+        this.#todos[this.size()-1].addChangeListener(todo => {
+            console.log(this);
+            this.changed();
+        });
         this.changed();
     }
 

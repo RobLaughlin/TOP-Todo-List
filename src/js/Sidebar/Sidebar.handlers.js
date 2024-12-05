@@ -149,12 +149,21 @@ export function searchBarUnFocused(e) {
  * Event handler for when the add Todo button
  * @param {string} projectUUID The UUID of the corresponding project
  */
-export function addTodoBtnClicked(projectUUID) {
+export function addTodoBtnClicked(e, projectUUID, edit=false) {
     let dialog = document.getElementsByClassName("addTodoModal")[0];
 
     // Set default date to today's date
     let dateInputField = dialog.querySelector("#TodoDate");
     dateInputField.valueAsDate = new Date();
+
+    let addTodoBtn = dialog.querySelector("#AddTodoBtn");
+    if (edit) {
+        addTodoBtn.textContent = "Edit Todo";
+        dialog.dataset['todo_clicked_uuid'] = e.target.parentElement.dataset['uuid'];
+    }
+    else {
+        addTodoBtn.textContent = "Add Todo";
+    }
 
     dialog.show();
 
@@ -199,13 +208,36 @@ export function addTodoSubmitClicked(sidebar, projects, e) {
         for (let i = 0; i < projects.length; i++) {
             let project = projects[i];
             if (project.uuid === projectId) {
-                project.add(todo);
+                if ("todo_clicked_uuid" in dialog.dataset) {
+                    // Edit todo
+                    const todoClickedUUID = dialog.dataset["todo_clicked_uuid"];
+
+                    for (let j = 0; j < project.size(); j++) {
+                        let todoToEdit = project.get(j);
+                        if (todoToEdit.uuid === todoClickedUUID) {
+                            todoToEdit.title = todo.title;
+                            todoToEdit.description = todo.description;
+                            todoToEdit.dueDate = todo.dueDate;
+                            todoToEdit.priority = todo.priority;
+                            todoToEdit.notes = todo.notes;
+                            break;
+                        }
+                    }
+
+                }
+                else {
+                    // Add the todo
+                    project.add(todo);
+                }
                 break;
             }
         }
 
-        sidebar.render();
-
+        // sidebar.render();
+        if ('todo_clicked_uuid' in dialog.dataset) {
+            delete dialog.dataset['todo_clicked_uuid'];
+        }
+        
         let backdrop = dialog.parentElement;
         backdrop.classList.toggle("invisible");
 
@@ -223,6 +255,11 @@ export function addTodoCloseClicked(e) {
     let dialog = document.getElementsByClassName("addTodoModal")[0];
     dialog.parentElement.classList.toggle("invisible");
     delete dialog.dataset["project_uuid"];
+
+    if ('todo_clicked_uuid' in dialog.dataset) {
+        delete dialog.dataset['todo_clicked_uuid'];
+    }
+
     dialog.close();
 }
 
@@ -320,8 +357,8 @@ export function searchKeyPressed(sidebar, e) {
     sidebar.render();
 }
 
-export function editTodoBtnClicked(todo, projectUUID) {
-    addTodoBtnClicked(projectUUID);
+export function editTodoBtnClicked(todo, projectUUID, e) {
+    addTodoBtnClicked(e, projectUUID, true);
     let form = document.querySelector("#AddTodoForm");
     let titleInput = form.querySelector("#TodoTitle");
     let dueDateInput = form.querySelector("#TodoDate");

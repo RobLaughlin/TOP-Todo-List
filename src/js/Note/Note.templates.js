@@ -11,13 +11,13 @@ export const note = (todo) => {
                 <span class="text">Priority: ${sanitizeHtml(todo.priority)}</span>
             </div>
             <div class="date textContainer">
-                <span class="text">${(todo.dueDate.toDateString())}</span>
+                <span class="text">${sanitizeHtml(todo.dueDate.toDateString())}</span>
             </div>
             <div class="description textContainer">
                 <span class="text">${sanitizeHtml(todo.description)}</span>
             </div>
             <div class="notes textContainer">
-                <span class="text">${todo.notes}"</span>
+                <span class="text">${sanitizeHtml(todo.notes)}</span>
             </div>
         </div>
     </div>

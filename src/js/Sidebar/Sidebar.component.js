@@ -118,8 +118,8 @@ export const createSidebar = (projects) => {
                 let todoNode = todoTemplate.content.querySelector("div");
 
                 let editTodoBtn = todoNode.querySelector(".editTodoIcon");
-                editTodoBtn.addEventListener("click", () => {
-                    handler.editTodoBtnClicked(project.todos[t], project.uuid);
+                editTodoBtn.addEventListener("click", e => {
+                    handler.editTodoBtnClicked(project.todos[t], project.uuid, e);
                 });
 
                 let removeTodoBtn = todoNode.querySelector(".removeProjectIcon");
@@ -145,7 +145,7 @@ export const createSidebar = (projects) => {
 
             // Implement add todo behaviour
             let plusIcon = addTodoItem.getElementsByClassName("icon")[0];
-            plusIcon.addEventListener("click", () => {handler.addTodoBtnClicked(project.uuid)});
+            plusIcon.addEventListener("click", e => {handler.addTodoBtnClicked(e, project.uuid)});
 
             itemContainer.appendChild(addTodoItem);
 
